@@ -1,8 +1,4 @@
-#include <ctype.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <inttypes.h>
+#include "parser.h"
 
 char peek(FILE *input){
     char c = getc(input);
@@ -26,23 +22,31 @@ void skipLine(FILE* input){
   while(c != '\n' && c != EOF) c= getc(input);
 }
 
-void parse(char* fpath){
+u_int32_t* parse(char* fpath){
     //open as binary
     FILE *file = fopen(fpath, "r");
     if (file == NULL) perror("Error opening file");
-    
+
+    int current_size = 0;
+    u_int32_t* machine_code = malloc(sizeof(u_int32_t)*current_size);
+
     char c = '\0';
     char str[20] = "";
     while(c!=EOF){
         c = getc(file);
         if(!isspace(c)&&!(c==EOF)&&!(c=='\n')) strncat(str,&c,1);
+        else{
+            //append 
+            current_size++;
+            u_int32_t* temp = realloc(machine_code, current_size * sizeof(u_int32_t));
+            machine_code=temp;
+            char *endptr;
+            u_int32_t code = (u_int32_t)strtoul(str, &endptr, 16);
+            machine_code[current_size-1]=code;
+            //printf("0x%" PRIX32 "\n",machine_code[current_size-1]);
+        }
     }
-    printf("%s\n",str);
 
     fclose(file);
-}
-
-int main(){
-    parse("bin/ret.s");
-    return 0;
+    return machine_code;
 }
