@@ -8,7 +8,6 @@
 
 int main() {
     u_int32_t* machine_code = parse("bin/ret.s");
-    //printf("0x%" PRIX32 "\n",machine_code[0]);
 
     // Allocate memory page
     void *mem = mmap(NULL, sizeof(*machine_code), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | MAP_JIT, -1, 0);

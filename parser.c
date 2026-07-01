@@ -6,17 +6,6 @@ char peek(FILE *input){
     return c;
 }
 
-int isEOL(FILE *input){return (peek(input)==EOF || peek(input)=='\n');}
-
-void skipWhitespace(FILE* input) {
-  char c = getc(input);
-  while (c != EOF && isspace(c)) {
-    c = getc(input);
-  }
-  ungetc(c, input);
-  return;
-}
-
 void skipLine(FILE* input){
   char c = getc(input);
   while(c != '\n' && c != EOF) c= getc(input);
@@ -45,7 +34,7 @@ u_int32_t* parse(char* fpath){
             //reset string
             strncpy(str, "", sizeof(str) - 1);
 
-            printf("0x%" PRIX32 "\n",machine_code[current_size-1]);
+            //printf("0x%" PRIX32 "\n",machine_code[current_size-1]);
         }
     }
 
