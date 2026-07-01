@@ -34,7 +34,8 @@ u_int32_t* parse(char* fpath){
     char str[20] = "";
     while(c!=EOF){
         c = getc(file);
-        if(!isspace(c)&&!(c==EOF)&&!(c=='\n')) strncat(str,&c,1);
+        if(c=='#') skipLine(file);//comment
+        else if(!isspace(c)&&!(c==EOF)&&!(c=='\n')) strncat(str,&c,1);
         else{
             //append
             current_size++;
@@ -44,7 +45,7 @@ u_int32_t* parse(char* fpath){
             //reset string
             strncpy(str, "", sizeof(str) - 1);
 
-            //printf("0x%" PRIX32 "\n",machine_code[current_size-1]);
+            printf("0x%" PRIX32 "\n",machine_code[current_size-1]);
         }
     }
 
