@@ -26,5 +26,6 @@ int main() {
     func();
 
     printf("Machine code executed successfully!\n");
+    free(machine_code);
     return 0;
 }

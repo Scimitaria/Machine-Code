@@ -36,13 +36,14 @@ u_int32_t* parse(char* fpath){
         c = getc(file);
         if(!isspace(c)&&!(c==EOF)&&!(c=='\n')) strncat(str,&c,1);
         else{
-            //append 
+            //append
             current_size++;
-            u_int32_t* temp = realloc(machine_code, current_size * sizeof(u_int32_t));
-            machine_code=temp;
-            char *endptr;
-            u_int32_t code = (u_int32_t)strtoul(str, &endptr, 16);
-            machine_code[current_size-1]=code;
+            machine_code = realloc(machine_code, current_size * sizeof(u_int32_t));
+            machine_code[current_size-1]=(u_int32_t)strtoul(str,NULL,16);
+
+            //reset string
+            strncpy(str, "", sizeof(str) - 1);
+
             //printf("0x%" PRIX32 "\n",machine_code[current_size-1]);
         }
     }

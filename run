@@ -1,4 +1,6 @@
 #!/bin/zsh
-gcc runner.c -o runner
+
+#trace errors with: gcc -Wall -Wextra -fsanitize=address -g *.c -o runner
+gcc *.c -o runner
 ./runner
 rm runner
