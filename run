@@ -1,0 +1,4 @@
+#!/bin/zsh
+gcc runner.c -o runner
+./runner
+rm runner
