@@ -171,14 +171,14 @@ uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
     }
 }
 //generates mul call
-u_int32_t mul(uint8_t destination, uint8_t op1, uint16_t op2){
+uint32_t mul(uint8_t destination, uint8_t op1, uint8_t op2){
     uint32_t code = 0;
 
     u_int8_t bitSize = 0b1; //64-bit
     code |= bitSize;
 
     code <<= 1;
-    u_int8_t isMSub = 0b0; //MADD adds product into third register - in our case, xzr (0)
+    u_int8_t isMSub = 0b1; //MADD adds product into third register - in our case, xzr (0)
     code |= isMSub;
 
     code <<= 1;
@@ -194,25 +194,81 @@ u_int32_t mul(uint8_t destination, uint8_t op1, uint16_t op2){
     code |= shift;
 
     code <<= 5;
-    code |= op2; //register value to mult
+    code |= op1; //register value to mult
 
     code <<= 6;
     u_int8_t imm6 = 0b000000; //no additional flags
     code |= imm6;
 
     code <<= 5;
-    code |= op1; //second register value to mult
+    code |= op2; //second register value to mult
+
+    code <<= 5;
+    code |= destination; //register to mult value into
+
+    return code;
+}
+//generates MSUB call
+uint32_t msub(uint8_t destination, uint8_t op1, uint8_t op2, uint8_t op3){
+    uint32_t code = 0;
+
+    u_int8_t bitSize = 0b1; //64-bit
+    code |= bitSize;
+
+    code <<= 7;
+    uint8_t opcode = 0b0011011; //mult
+    code |= opcode;
+
+    code <<= 3;
+    uint8_t shift = 0b000; //no shift
+    code |= shift;
+
+    code <<= 5;
+    code |= op2; //second register value to mult
+
+    code <<= 1;
+    u_int8_t isMSub = 0b1; //MSUB subs product from third register
+    code |= isMSub;
+
+    code <<= 5;
+    code |= op3; //minuend
+
+    code <<= 5;
+    code |= op1; //first register value to mult
 
     code <<= 5;
     code |= destination; //register to sub value into
 
     return code;
 }
+//generates div call
+uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator){
+    uint32_t code = 0;
+
+    code <<= 11;
+    u_int16_t fixed = 0b10011010110; //don't have the fixed breakdown on this one
+    code |= fixed;
+
+    code <<= 5;
+    code |= denominator;
+
+    code <<= 6;
+    uint8_t opcode = 0b000010; //UDIV
+    code |= opcode;
+
+    code <<= 5;
+    code |= numerator;
+
+    code <<= 5;
+    code |= destination;
+
+    return code;
+}
 
 int main(){
-    print_hex(mov(1,23));
-    print_hex(mov(2,3));
-    print_hex(mul(0,1,2));
+    print_hex(mov(1,2898));
+    print_hex(mov(2,42));
+    print_hex(div(0,1,2));
     print_hex(ret);
     return 0;
 }
