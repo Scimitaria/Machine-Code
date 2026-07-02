@@ -132,22 +132,22 @@ uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
 
     if(is_immediate){
         code <<= 6;
-        uint16_t opcode = 0b100010; //immediate add
+        uint16_t opcode = 0b100010; //immediate sub
         code |= opcode;
 
         code <<= 13;
-        code |= op2; //literal value to add
+        code |= op2; //literal value to sub
 
         code <<= 5;
-        code |= op1; //register value to add
+        code |= op1; //register value to sub
 
         code <<= 5;
-        code |= destination; //register to add value into
+        code |= destination; //register to sub value into
 
         return code;
     } else {
         code <<= 5;
-        uint8_t opcode = 0b01011; //add
+        uint8_t opcode = 0b01011; //sub
         code |= opcode;
 
         code <<= 3;
@@ -155,26 +155,80 @@ uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
         code |= shift;
 
         code <<= 5;
-        code |= op2; //register value to add
+        code |= op2; //register value to sub
 
         code <<= 6;
         u_int8_t imm6 = 0b000000; //no additional flags
         code |= imm6;
 
         code <<= 5;
-        code |= op1; //second register value to add
+        code |= op1; //second register value to sub
 
         code <<= 5;
-        code |= destination; //register to add value into
+        code |= destination; //register to sub value into
 
         return code;
     }
 }
+//generates mul call
+u_int32_t mul(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
+    uint32_t code = 0;
 
+    u_int8_t bitSize = 0b1; //64-bit
+    code |= bitSize;
+
+    code <<= 1;
+    u_int8_t isMSub = 0b0; //MADD adds product into third register - in our case, xzr (0)
+    code |= isMSub;
+
+    code <<= 1;
+    u_int8_t setFlags = 0b0; //do not set additional flags
+    code |= setFlags;
+
+    if(is_immediate){
+        code <<= 6;
+        uint16_t opcode = 0b100010; //immediate sub
+        code |= opcode;
+
+        code <<= 13;
+        code |= op2; //literal value to sub
+
+        code <<= 5;
+        code |= op1; //register value to sub
+
+        code <<= 5;
+        code |= destination; //register to sub value into
+
+        return code;
+    } else {
+        code <<= 5;
+        uint8_t opcode = 0b11011; //mult
+        code |= opcode;
+
+        code <<= 3;
+        uint8_t shift = 0b000; //no shift
+        code |= shift;
+
+        code <<= 5;
+        code |= op2; //register value to mult
+
+        code <<= 6;
+        u_int8_t imm6 = 0b000000; //no additional flags
+        code |= imm6;
+
+        code <<= 5;
+        code |= op1; //second register value to mult
+
+        code <<= 5;
+        code |= destination; //register to sub value into
+
+        return code;
+    }
+}
 int main(){
-    print_hex(mov(1,100));;
-    print_hex(sub(2,1,69,1));
-    print_hex(sub(0,1,2,0));
+    print_hex(mov(1,23));
+    print_hex(mov(2,3));
+    print_hex(mul(0,1,2,0));
     print_hex(ret);
     return 0;
 }

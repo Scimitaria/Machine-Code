@@ -2,5 +2,9 @@
 
 #trace errors with: gcc -Wall -Wextra -fsanitize=address -g *.c -o runner
 gcc *.c -o runner
-./runner
+if [[ -n $1 ]]; then
+    ./runner $1
+else
+    ./runner bin/print.s
+fi
 rm runner

@@ -3,8 +3,8 @@
 #include <sys/mman.h>
 #include "parser.h"
 
-int main() {
-    u_int32_t* machine_code = parse("bin/sub.s");
+int main(int argc, char *argv[]) {
+    u_int32_t* machine_code = parse(argv[1]);
     size_t MC_SIZE = sizeof(u_int32_t)*current_size;
 
     // Allocate memory page
