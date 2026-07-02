@@ -4,7 +4,7 @@
 #include "parser.h"
 
 int main() {
-    u_int32_t* machine_code = parse("bin/print.s");
+    u_int32_t* machine_code = parse("bin/math.s");
     size_t MC_SIZE = sizeof(u_int32_t)*current_size;
 
     // Allocate memory page
@@ -22,9 +22,8 @@ int main() {
     // Cast memory address to a function pointer and execute it
     int (*func)(void) = mem;
     int r = func();
-    printf("\nReturn code: %d\n", r);
+    printf("Return code: %d\n", r);
 
-    printf("Machine code executed successfully!\n");
     free(machine_code);
     return 0;
 }
