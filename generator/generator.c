@@ -2,6 +2,10 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#define nop 0xD503201F
+#define ret 0xD65F03C0
+#define svc 0xD4001001
+
 void print_binary(uint32_t code) {
     printf("0b");
     for (int i = 31; i >= 0; i--) {
@@ -12,15 +16,6 @@ void print_binary(uint32_t code) {
 }
 void print_hex(u_int32_t code){
     printf("0x%" PRIX32 "\n",code);
-}
-
-uint32_t decimalToBinary(int n){
-    u_int32_t bin = 0;
-    for (int i = 31; i >= 0; i--){
-        bin <<= 1;
-        bin |= (n >> i) & 1;
-    }
-    return bin;
 }
 
 //generates mov call
