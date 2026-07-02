@@ -2,8 +2,57 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+void print_binary(uint32_t code) {
+    printf("0b");
+    for (int i = 31; i >= 0; i--) {
+        uint32_t bit = (code >> i) & 1;
+        printf("%u", bit);
+    }
+    printf("\n");
+}
+void print_hex(u_int32_t code){
+    printf("0x%" PRIX32 "\n",code);
+}
+
+uint32_t decimalToBinary(int n){
+    u_int32_t bin = 0;
+    for (int i = 31; i >= 0; i--){
+        bin <<= 1;
+        bin |= (n >> i) & 1;
+    }
+    return bin;
+}
+
+//generates mov call
+uint32_t mov(uint16_t val, uint8_t reg){
+    uint32_t code = 0;
+
+    uint8_t bitSize = 0b1; //64-bit
+    code |= bitSize;
+
+    code <<= 2;
+    uint8_t opcode = 0b10; //MOV
+    code |= opcode;
+
+    code <<= 6;
+    uint8_t moveType = 0b100101; //move wide
+    code |= moveType;
+
+    code <<= 2;
+    uint8_t leftShift = 0b0; //none
+    code |= leftShift;
+
+    code <<= 16;
+    code |= val; //value to load
+
+    code <<= 5;
+    code |= reg; //register 
+
+    return code;
+}
+
 //generates adr call
-uint32_t adr(size_t string_offset, uint8_t rd)
+uint32_t adr(size_t string_offset, uint8_t reg)
 {
     int32_t off = (int32_t)string_offset;
 
@@ -13,10 +62,11 @@ uint32_t adr(size_t string_offset, uint8_t rd)
     return 0x10000000
          | (immlo << 29)
          | (immhi << 5)
-         | (rd & 0x1F);
+         | (reg & 0x1F);
 }
 
 int main(){
-    printf("0x%" PRIX32 "\n", adr(20,1));
+    print_hex(mov(1,0));
+    print_hex(adr(20,1));
     return 0;
 }
