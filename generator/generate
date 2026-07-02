@@ -1,5 +1,0 @@
-#!/bin/zsh
-
-gcc generator.c -o generator
-./generator
-rm generator

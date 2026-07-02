@@ -4,7 +4,7 @@
 #include "parser.h"
 
 int main() {
-    u_int32_t* machine_code = parse("bin/math.s");
+    u_int32_t* machine_code = parse("bin/sub.s");
     size_t MC_SIZE = sizeof(u_int32_t)*current_size;
 
     // Allocate memory page
