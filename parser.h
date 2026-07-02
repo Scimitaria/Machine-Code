@@ -6,4 +6,5 @@
 #include <string.h>
 #include <inttypes.h>
 
+int current_size;
 u_int32_t* parse(char* fpath);

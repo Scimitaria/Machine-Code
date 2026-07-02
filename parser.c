@@ -11,12 +11,14 @@ void skipLine(FILE* input){
   while(c != '\n' && c != EOF) c= getc(input);
 }
 
+int current_size=0;
+
 u_int32_t* parse(char* fpath){
     //open as binary
     FILE *file = fopen(fpath, "r");
     if (file == NULL) perror("Error opening file");
 
-    int current_size = 0;
+    current_size = 0;
     u_int32_t* machine_code = malloc(sizeof(u_int32_t)*current_size);
 
     char c = '\0';
@@ -26,6 +28,9 @@ u_int32_t* parse(char* fpath){
         if(c=='#') skipLine(file);//comment
         else if(!isspace(c)&&!(c==EOF)&&!(c=='\n')) strncat(str,&c,1);
         else{
+            //don't append empty
+            if(strcmp(str,"")==0) continue;
+
             //append
             current_size++;
             machine_code = realloc(machine_code, current_size * sizeof(u_int32_t));
