@@ -2,9 +2,9 @@
 #include <string.h>
 #include <sys/mman.h>
 #include "parser.h"
-
+//TODO: add generator
 int main() {
-    u_int32_t* machine_code = parse("bin/nopret.s");
+    u_int32_t* machine_code = parse("bin/mov.s");
     size_t MC_SIZE = sizeof(u_int32_t)*current_size;
 
     // Allocate memory page
