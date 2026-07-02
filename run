@@ -3,7 +3,7 @@
 #trace errors with: gcc -Wall -Wextra -fsanitize=address -g *.c -o runner
 gcc *.c -o runner
 if [[ -n $1 ]]; then
-    ./runner $1
+    ./runner bin/$1
 else
     ./runner bin/print.s
 fi

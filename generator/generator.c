@@ -171,7 +171,7 @@ uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
     }
 }
 //generates mul call
-u_int32_t mul(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
+u_int32_t mul(uint8_t destination, uint8_t op1, uint16_t op2){
     uint32_t code = 0;
 
     u_int8_t bitSize = 0b1; //64-bit
@@ -185,50 +185,34 @@ u_int32_t mul(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
     u_int8_t setFlags = 0b0; //do not set additional flags
     code |= setFlags;
 
-    if(is_immediate){
-        code <<= 6;
-        uint16_t opcode = 0b100010; //immediate sub
-        code |= opcode;
+    code <<= 5;
+    uint8_t opcode = 0b11011; //mult
+    code |= opcode;
 
-        code <<= 13;
-        code |= op2; //literal value to sub
+    code <<= 3;
+    uint8_t shift = 0b000; //no shift
+    code |= shift;
 
-        code <<= 5;
-        code |= op1; //register value to sub
+    code <<= 5;
+    code |= op2; //register value to mult
 
-        code <<= 5;
-        code |= destination; //register to sub value into
+    code <<= 6;
+    u_int8_t imm6 = 0b000000; //no additional flags
+    code |= imm6;
 
-        return code;
-    } else {
-        code <<= 5;
-        uint8_t opcode = 0b11011; //mult
-        code |= opcode;
+    code <<= 5;
+    code |= op1; //second register value to mult
 
-        code <<= 3;
-        uint8_t shift = 0b000; //no shift
-        code |= shift;
+    code <<= 5;
+    code |= destination; //register to sub value into
 
-        code <<= 5;
-        code |= op2; //register value to mult
-
-        code <<= 6;
-        u_int8_t imm6 = 0b000000; //no additional flags
-        code |= imm6;
-
-        code <<= 5;
-        code |= op1; //second register value to mult
-
-        code <<= 5;
-        code |= destination; //register to sub value into
-
-        return code;
-    }
+    return code;
 }
+
 int main(){
     print_hex(mov(1,23));
     print_hex(mov(2,3));
-    print_hex(mul(0,1,2,0));
+    print_hex(mul(0,1,2));
     print_hex(ret);
     return 0;
 }
