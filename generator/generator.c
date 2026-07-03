@@ -60,6 +60,7 @@ uint32_t adr(size_t string_offset, uint8_t reg)
          | (reg & 0x1F);
 }
 
+/* MATH */
 //generates add call
 uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
     uint32_t code = 0;
@@ -265,10 +266,20 @@ uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator){
     return code;
 }
 
+//generates b (branch jump)
+uint32_t b(u_int32_t offset){
+    uint32_t code = 0b000101; //b opcode
+    code <<= 26;
+    code |= offset;
+
+    return code;
+}
+
 int main(){
-    print_hex(mov(1,2898));
-    print_hex(mov(2,42));
-    print_hex(div(0,1,2));
+    print_hex(mov(0,42));
+    print_hex(ret);
+    print_hex(b(2));
+    print_hex(mov(0,69));
     print_hex(ret);
     return 0;
 }
