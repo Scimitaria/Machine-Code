@@ -267,19 +267,20 @@ uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator){
 }
 
 //generates b (branch jump)
-uint32_t b(u_int32_t offset){
+uint32_t b(int32_t offset){
     uint32_t code = 0b000101; //b opcode
     code <<= 26;
-    code |= offset;
+    code |= (offset & 0x3FFFFFF); // mask to 26 bits in case of negative numbers
 
     return code;
 }
 
 int main(){
     print_hex(mov(0,42));
-    print_hex(ret);
     print_hex(b(2));
+    print_hex(ret);
     print_hex(mov(0,69));
+    print_hex(b(-2));
     print_hex(ret);
     return 0;
 }
