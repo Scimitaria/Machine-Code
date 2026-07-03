@@ -2,9 +2,20 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+//fixed hexcodes
 #define nop 0xD503201F
 #define ret 0xD65F03C0
 #define svc 0xD4001001
+
+//common opcodes for b.cond
+typedef enum {
+    eq = 0b0000, // ==
+    ne = 0b0001, // !=
+    ge = 0b1010, // >=
+    lt = 0b1011, // <
+    gt = 0b1100, // >
+    le = 0b1101  // <=
+} cond;
 
 void print_binary(uint32_t code) {
     printf("0b");
@@ -47,12 +58,9 @@ uint32_t mov(uint8_t reg, uint16_t val){
 }
 
 //generates adr call
-uint32_t adr(size_t string_offset, uint8_t reg)
-{
-    int32_t off = (int32_t)string_offset;
-
-    uint32_t immlo = off & 0x3;
-    uint32_t immhi = (off >> 2) & 0x7FFFF;
+uint32_t adr(int32_t string_offset, uint8_t reg){
+    uint32_t immlo = string_offset & 0x3;
+    uint32_t immhi = (string_offset >> 2) & 0x7FFFF;
 
     return 0x10000000
          | (immlo << 29)
@@ -268,19 +276,72 @@ uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator){
 
 //generates b (branch jump)
 uint32_t b(int32_t offset){
-    uint32_t code = 0b000101; //b opcode
+    uint32_t code = 0b000101; //B opcode
     code <<= 26;
     code |= (offset & 0x3FFFFFF); // mask to 26 bits in case of negative numbers
 
     return code;
 }
+//generates b.cond (conditional jump)
+uint32_t b_cond(int32_t offset, uint8_t cond) {
+    uint32_t code = 0b01010100;      // B.cond opcode
+
+    code <<= 19;
+    code |= (offset & 0x7FFFF);      // mask to 19 bits
+
+    code <<= 5;                      // shift left 1 extra to leave bit 4 = 0
+    code |= (cond & 0xF);            // condition code in bits [3:0]
+    return code;
+}
+
+//generates cmp (comparison, required for b.cond)
+//this is actually just subtraction with flags on and discarding the result
+uint32_t cmp(uint8_t op1, uint8_t op2){
+    uint32_t code = 0;
+
+    u_int8_t bitSize = 0b1; //64-bit
+    code |= bitSize;
+
+    code <<= 1;
+    u_int8_t isSub = 0b1; //is sub
+    code |= isSub;
+
+    code <<= 1;
+    u_int8_t setFlags = 0b1; //set flags for CMP
+    code |= setFlags;
+
+    code <<= 5;
+    u_int8_t opcode = 0b01011; //opcode for add/sub
+    code |= opcode;
+
+    code <<= 3;
+    u_int8_t shift = 0b000; //no shift
+    code |= shift;
+
+    code <<= 5;
+    code |= op2; //register value to compare
+
+    code <<= 6;
+    u_int8_t imm6 = 0b000000; //no additional flags
+    code |= imm6;
+
+    code <<= 5;
+    code |= op1; //second register value to compare
+
+    code <<= 5;
+    u_int8_t destination = 0b11111; // XZR ; throws result away
+    code |= destination;
+    
+    return code;
+}
 
 int main(){
+    print_hex(mov(1,42));
     print_hex(mov(0,42));
-    print_hex(b(2));
+    print_hex(cmp(0,1));
+    print_hex(b_cond(2,eq));
     print_hex(ret);
     print_hex(mov(0,69));
-    print_hex(b(-2));
     print_hex(ret);
     return 0;
 }
