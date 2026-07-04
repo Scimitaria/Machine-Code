@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include "asm_parser.h"
 
 //fixed hexcodes
 #define nop 0xD503201F
