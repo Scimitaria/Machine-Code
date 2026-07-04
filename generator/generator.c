@@ -4,9 +4,10 @@
 #include "asm_parser.h"
 
 //fixed hexcodes
-#define nop 0xD503201F
-#define ret 0xD65F03C0
-#define svc 0xD4001001
+#define nop 0xD503201F //idle
+#define ret 0xD65F03C0 //return
+#define svc 0xD4001001 //syscall
+#define sp (uint8_t)31 //stack pointer reg
 
 //common opcodes for b.cond
 typedef enum {
@@ -337,12 +338,10 @@ uint32_t cmp(uint8_t op1, uint8_t op2){
 }
 
 int main(){
-    print_hex(mov(0,60));
-    print_hex(mov(1,69));
-    print_hex(add(0,0,1,1));
-    print_hex(cmp(0,1));
-    print_hex(b_cond(2,eq));
-    print_hex(b(-3));
-    print_hex(ret);
+    print_hex(mov(0,1));
+    print_hex(add(1,sp,0,1));
+    print_hex(mov(2,8));
+    print_hex(mov(16,4));
+    print_hex(svc);
     return 0;
 }
