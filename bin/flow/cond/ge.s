@@ -1,0 +1,11 @@
+0xD2800540 # MOV x0,#42
+0xD28008A1 # MOV x1,#69
+
+0xEB00003F # CMP x1,x0
+0x5400004A # B.GE 2 ; jump if x1 >= x0
+
+0xD65F03C0 # RET
+
+# B.NE 2 lands here
+0xD28008A0 # MOV x0,#69
+0xD65F03C0 # RET

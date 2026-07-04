@@ -336,12 +336,6 @@ uint32_t cmp(uint8_t op1, uint8_t op2){
 }
 
 int main(){
-    print_hex(mov(1,42));
-    print_hex(mov(0,42));
-    print_hex(cmp(0,1));
-    print_hex(b_cond(2,eq));
-    print_hex(ret);
-    print_hex(mov(0,69));
-    print_hex(ret);
+    print_hex(b_cond(2,ge));
     return 0;
 }
