@@ -1,0 +1,12 @@
+# Until loop
+
+0xD2800780 # MOV x0,#60
+0xD28008A1 # MOV x1,#69
+
+# B -3 goes here
+0x91000400 # ADD x0,x0,#1
+0xEB01001F 0x54000040 # B.EQ x0,x1,2
+0x17FFFFFD # B -3
+
+# B.EQ goes here
+0xD65F03C0 # RET

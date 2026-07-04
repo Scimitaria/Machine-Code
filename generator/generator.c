@@ -58,7 +58,7 @@ uint32_t mov(uint8_t reg, uint16_t val){
 }
 
 //generates adr call
-uint32_t adr(int32_t string_offset, uint8_t reg){
+uint32_t adr(uint8_t reg, int32_t string_offset){
     uint32_t immlo = string_offset & 0x3;
     uint32_t immhi = (string_offset >> 2) & 0x7FFFF;
 
@@ -336,6 +336,12 @@ uint32_t cmp(uint8_t op1, uint8_t op2){
 }
 
 int main(){
-    print_hex(b_cond(2,ge));
+    print_hex(mov(0,60));
+    print_hex(mov(1,69));
+    print_hex(add(0,0,1,1));
+    print_hex(cmp(0,1));
+    print_hex(b_cond(2,eq));
+    print_hex(b(-3));
+    print_hex(ret);
     return 0;
 }
