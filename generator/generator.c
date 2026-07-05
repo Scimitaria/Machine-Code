@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <inttypes.h>
 #include "asm_parser.h"
 
@@ -7,7 +8,10 @@
 #define nop 0xD503201F //idle
 #define ret 0xD65F03C0 //return
 #define svc 0xD4001001 //syscall
+
+//registers
 #define sp (uint8_t)31 //stack pointer reg
+#define xzr (uint8_t)31 //zero register???
 
 //common opcodes for b.cond
 typedef enum {
@@ -32,11 +36,10 @@ void print_hex(u_int32_t code){
 }
 
 //generates mov call
-uint32_t mov(uint8_t reg, uint16_t val){
+uint32_t mov(uint8_t reg, uint16_t val, bool isX){
     uint32_t code = 0;
 
-    uint8_t bitSize = 0b1; //64-bit
-    code |= bitSize;
+    code |= isX; //64-bit (x) or 32-bit (w)
 
     code <<= 2;
     uint8_t opcode = 0b10; //MOV
@@ -58,6 +61,43 @@ uint32_t mov(uint8_t reg, uint16_t val){
 
     return code;
 }
+//generates mov call with registers
+uint32_t movreg(uint8_t destination, uint8_t source, bool isX){
+    uint32_t code = 0;
+
+    code <<= 1;
+    code |= isX;
+
+    code <<= 2;
+    code |= 0b01; //ORR
+
+    code <<= 5;
+    uint8_t opcode = 0b01010; //logical-shifted-register
+    code |= opcode;
+
+    code <<= 2;
+    uint8_t shift = 0b00;
+    code |= shift;
+
+    code <<= 1;
+    uint8_t invertRM = 0b0; //1 makes ORN
+    code |= invertRM;
+
+    code <<= 5;
+    code |= source;
+
+    code <<= 6;
+    uint8_t imm6 = 0b000000;
+    code |= imm6;
+
+    code <<= 5;
+    code |= xzr;
+
+    code <<= 5;
+    code |= destination;
+
+    return code;
+}
 
 //generates adr call
 uint32_t adr(uint8_t reg, int32_t string_offset){
@@ -72,11 +112,10 @@ uint32_t adr(uint8_t reg, int32_t string_offset){
 
 /* MATH */
 //generates add call
-uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
+uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, bool isX){
     uint32_t code = 0;
 
-    u_int8_t bitSize = 0b1; //64-bit
-    code |= bitSize;
+    code |= isX;
 
     code <<= 1;
     u_int8_t isSub = 0b0; //is add, not sub
@@ -127,11 +166,10 @@ uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
     }
 }
 //generates sub call
-uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
+uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, bool isX){
     uint32_t code = 0;
 
-    u_int8_t bitSize = 0b1; //64-bit
-    code |= bitSize;
+    code |= isX;
 
     code <<= 1;
     u_int8_t isSub = 0b1; //is sub
@@ -182,11 +220,10 @@ uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, int is_immediate){
     }
 }
 //generates mul call
-uint32_t mul(uint8_t destination, uint8_t op1, uint8_t op2){
+uint32_t mul(uint8_t destination, uint8_t op1, uint8_t op2, bool isX){
     uint32_t code = 0;
 
-    u_int8_t bitSize = 0b1; //64-bit
-    code |= bitSize;
+    code |= isX;
 
     code <<= 1;
     u_int8_t isMSub = 0b1; //MADD adds product into third register - in our case, xzr (0)
@@ -220,11 +257,10 @@ uint32_t mul(uint8_t destination, uint8_t op1, uint8_t op2){
     return code;
 }
 //generates MSUB call
-uint32_t msub(uint8_t destination, uint8_t op1, uint8_t op2, uint8_t op3){
+uint32_t msub(uint8_t destination, uint8_t op1, uint8_t op2, uint8_t op3, bool isX){
     uint32_t code = 0;
 
-    u_int8_t bitSize = 0b1; //64-bit
-    code |= bitSize;
+    code |= isX;
 
     code <<= 7;
     uint8_t opcode = 0b0011011; //mult
@@ -253,11 +289,14 @@ uint32_t msub(uint8_t destination, uint8_t op1, uint8_t op2, uint8_t op3){
     return code;
 }
 //generates div call
-uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator){
+uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator, bool isX){
     uint32_t code = 0;
 
-    code <<= 11;
-    u_int16_t fixed = 0b10011010110; //don't have the fixed breakdown on this one
+    code <<= 1;
+    code |= isX;
+
+    code <<= 10;
+    u_int16_t fixed = 0b0011010110; //don't have the fixed breakdown on this one
     code |= fixed;
 
     code <<= 5;
@@ -293,6 +332,29 @@ uint32_t b_cond(int32_t offset, uint8_t cond) {
 
     code <<= 5;                      // shift left 1 extra to leave bit 4 = 0
     code |= (cond & 0xF);            // condition code in bits [3:0]
+    return code;
+}
+//generates cbz (compare and jump on zero)
+uint32_t cbz(uint8_t reg, int32_t offset, bool isCBNZ, bool isX){
+    uint32_t code = 0;
+
+    code <<= 1;
+    code |= isX;
+
+    code <<= 6;
+    uint8_t opcode = 0b011010; //CBZ/CBNZ
+    code |= opcode;
+
+    code <<= 1;
+    code |= isCBNZ; //0 is CBZ, 1 is CBNZ
+
+    //CBZ jump should be in instrs, not bits
+    code <<= 19;
+    code |= (offset & 0x7FFFF); // mask to 19 bits
+
+    code <<= 5;
+    code |= reg;
+
     return code;
 }
 
@@ -337,7 +399,43 @@ uint32_t cmp(uint8_t op1, uint8_t op2){
     return code;
 }
 
+//generates strb (store byte)
+uint32_t strb(uint8_t source, uint8_t base, bool isX){
+    uint32_t code = 0;
+
+    code <<= 1;
+    code |= isX;
+
+    code <<= 1;
+    uint8_t access_size = 0b0; //1 byte
+    code |= access_size;
+
+    code <<= 1;
+    uint8_t isStore = 0b1; //store
+    code |= isStore;
+
+    code <<= 5;
+    uint8_t opcode = 0b11001; //load/store
+    code |= opcode;
+
+    code <<= 2;
+    uint8_t high_bits = 0b00; //immediate high bits
+    code |= high_bits;
+
+    code <<= 12;
+    uint8_t immediate = 0b000000000000; //immediate bits
+    code |= immediate;
+
+    code <<= 5;
+    code |= base;
+
+    code <<= 5;
+    code |= source;
+
+    return code;
+}
+
 int main(){
-    print_hex(b_cond(-2,lt));
+    print_hex(cbz(6,-6,1,1));
     return 0;
 }
