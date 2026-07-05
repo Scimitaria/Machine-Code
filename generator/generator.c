@@ -324,7 +324,7 @@ uint32_t b(int32_t offset){
     return code;
 }
 //generates b.cond (conditional jump)
-uint32_t b_cond(int32_t offset, uint8_t cond) {
+uint32_t b_cond(uint8_t cond, int32_t offset) {
     uint32_t code = 0b01010100;      // B.cond opcode
 
     code <<= 19;
@@ -360,11 +360,10 @@ uint32_t cbz(uint8_t reg, int32_t offset, bool isCBNZ, bool isX){
 
 //generates cmp (comparison, required for b.cond)
 //this is actually just subtraction with flags on and discarding the result
-uint32_t cmp(uint8_t op1, uint8_t op2){
+uint32_t cmp(uint8_t op1, uint16_t op2, bool is_immediate, bool isX){
     uint32_t code = 0;
 
-    u_int8_t bitSize = 0b1; //64-bit
-    code |= bitSize;
+    code |= isX;
 
     code <<= 1;
     u_int8_t isSub = 0b1; //is sub
@@ -374,20 +373,33 @@ uint32_t cmp(uint8_t op1, uint8_t op2){
     u_int8_t setFlags = 0b1; //set flags for CMP
     code |= setFlags;
 
-    code <<= 5;
-    u_int8_t opcode = 0b01011; //opcode for add/sub
-    code |= opcode;
+    if(is_immediate){
+        code <<= 5;
+        uint8_t opcode = 0b10001; //immediate add/subtract
+        code |= opcode;
 
-    code <<= 3;
-    u_int8_t shift = 0b000; //no shift
-    code |= shift;
+        code <<= 2;
+        uint8_t shift = 0b00;
+        code |= shift;
 
-    code <<= 5;
-    code |= op2; //register value to compare
+        code <<= 12;
+        code |= op2;
+    } else {
+        code <<= 5;
+        u_int8_t opcode = 0b01011; //opcode for add/sub
+        code |= opcode;
 
-    code <<= 6;
-    u_int8_t imm6 = 0b000000; //no additional flags
-    code |= imm6;
+        code <<= 3;
+        u_int8_t shift = 0b000; //no shift
+        code |= shift;
+
+        code <<= 5;
+        code |= op2; //register value to compare
+
+        code <<= 6;
+        u_int8_t imm6 = 0b000000; //no additional flags
+        code |= imm6;
+    }
 
     code <<= 5;
     code |= op1; //second register value to compare
@@ -434,8 +446,38 @@ uint32_t strb(uint8_t source, uint8_t base, bool isX){
 
     return code;
 }
+//generates ldrb
+uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
+    uint32_t code = 0;
+
+    code <<= 1;
+    code |= isX;
+
+    code <<= 1;
+    uint8_t access_size = 0b0; //1 byte
+    code |= access_size;
+
+    code <<= 9;
+    uint16_t opcode = 0b111000011;
+    code |= opcode;
+
+    code <<= 5;
+    code |= offset;
+
+    code <<= 6;
+    uint8_t options = 0b011010;
+    code |= options;
+
+    code <<= 5;
+    code |= base;
+
+    code <<= 5;
+    code |= destination;
+
+    return code;
+}
 
 int main(){
-    print_hex(cbz(6,-6,1,1));
+    print_hex(cmp(3,9,0,1));
     return 0;
 }
