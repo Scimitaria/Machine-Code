@@ -478,6 +478,6 @@ uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
 }
 
 int main(){
-    print_hex(cmp(3,9,0,1));
+    print_hex(adr(1,232));
     return 0;
 }
