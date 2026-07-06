@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <inttypes.h>
-#include "asm_parser.h"
 
 //fixed hexcodes
 #define nop 0xD503201F //idle
@@ -543,6 +542,6 @@ uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
 }
 
 int main(){
-    print_hex(strb(5,6,7,0));
+    print_hex(b(-452));
     return 0;
 }
