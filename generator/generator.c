@@ -411,8 +411,8 @@ uint32_t cmp(uint8_t op1, uint16_t op2, bool is_immediate, bool isX){
     return code;
 }
 
-//generates strb (store byte)
-uint32_t strb(uint8_t source, uint8_t base, bool isX){
+//generates strb (store byte) w/o bounds
+uint32_t strb_nb(uint8_t source, uint8_t base, bool isX){
     uint32_t code = 0;
 
     code <<= 1;
@@ -446,8 +446,8 @@ uint32_t strb(uint8_t source, uint8_t base, bool isX){
 
     return code;
 }
-//generates ldrb
-uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
+//generates strb w/ bounds
+uint32_t strb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
     uint32_t code = 0;
 
     code <<= 1;
@@ -458,7 +458,72 @@ uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
     code |= access_size;
 
     code <<= 9;
-    uint16_t opcode = 0b111000011;
+    uint16_t opcode = 0b111000001;
+    code |= opcode;
+
+    code <<= 5;
+    code |= offset;
+
+    code <<= 6;
+    uint8_t options = 0b011010;
+    code |= options;
+
+    code <<= 5;
+    code |= base;
+
+    code <<= 5;
+    code |= destination;
+
+    return code;
+}
+//generates ldrb w/o bounds
+uint32_t ldrb_nb(uint8_t destination, uint8_t base, bool isX){
+    uint32_t code = 0;
+
+    code <<= 1;
+    code |= isX;
+
+    code <<= 1;
+    uint8_t access_size = 0b0; //1 byte
+    code |= access_size;
+
+    code <<= 6;
+    uint8_t opcode = 0b111001; //load/store
+    code |= opcode;
+
+    code <<= 2;
+    uint8_t isLoad = 0b01;
+    code |= isLoad;
+
+    code <<= 12;
+    uint16_t immediate = 0b000000000000;
+    code |= immediate;
+
+    code <<= 5;
+    code |= base;
+
+    code <<= 5;
+    code |= destination;
+
+    return code;
+}
+//generates ldrb w/ bounds
+uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
+    uint32_t code = 0;
+
+    code <<= 1;
+    code |= isX;
+
+    code <<= 1;
+    uint8_t access_size = 0b0; //1 byte
+    code |= access_size;
+
+    code <<= 1;
+    uint8_t isLoad = 0b1;
+    code |= isLoad;
+
+    code <<= 8;
+    uint16_t opcode = 0b11000011;
     code |= opcode;
 
     code <<= 5;
@@ -478,6 +543,6 @@ uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
 }
 
 int main(){
-    print_hex(adr(1,348));
+    print_hex(strb(5,6,7,0));
     return 0;
 }
