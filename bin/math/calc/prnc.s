@@ -48,9 +48,9 @@
 ### NUM1 STORED ###
 
 
-### READ NUM2 INTO x18 ### 28
+### READ NUM2 INTO x18 ###
 ## PRINT PROMPT ##
-    0x10000B61  # ADR prompt ; 364-bit offset
+    0x10000B41  # ADR prompt ; 360-bit offset
     0xD2800020  # MOV x0, #1 ; 1 = stdout
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16, #4 ; set up syscall for 'write'
@@ -87,9 +87,9 @@
     0xAA0203F2 # MOV x18,x2
 ### NUM2 STORED ###
 
-### READ OPERATION INTO W3 ### 11
+### READ OPERATION INTO W3 ###
 ## PRINT PROMPT ##
-    0x10000AE1  # ADR prompt ; 348-bit offset
+    0x100007C1  # ADR prompt ; 248-bit offset
     0xD2800020  # MOV x0, #1 ; 1 = stdout
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
@@ -104,22 +104,22 @@
     0x394003E3   # LDRB W3,[SP]
 ### OP STORED
 
-### OPERATIONS ### 19
+### OPERATIONS ###
 ## ADD ##
     0x7100AC7F # CMP W3,#'+'
     0x54000061 # B.NE 3 ; skip to -
     0x8B120222 # ADD x2,x17,x18
-    0x1400000D # B 13 ; jump to print
+    0x14000010 # B 16 ; jump to print
 ## SUB ##
     0x7100B47F # CMP W3,#'-'
     0x54000061 # B.NE 3 ; skip to *
     0xCB120222 # SUB x2,x17,x18
-    0x1400000A # B 10 ; jump to print
+    0x1400000C # B 12 ; jump to print
 ## MUL ##
     0x7100A87F # CMP W3,#'*'
     0x54000061 # B.NE 3 ; skip to /
     0xDB110242 # MUL x2,x17,x18
-    0x14000007 # B 7 ; jump to print
+    0x14000008 # B 8 ; jump to print
 ## DIV ##
     0x7100BC7F # CMP W3,#'/'
     0x54000061 # B.NE 3 ; skip to e
@@ -127,11 +127,11 @@
     0x14000004 # B 4 ; jump to print
 ## EXIT ##
     0x71008C7F # CMP W3,#'e'
-    0x540003A0 # B.EQ 29 ; jump to exit
+    0x540003C0 # B.EQ 30 ; jump to exit
 0x17FFFFAB # B -85 ; jump back to start
 ### END OPERATIONS ###
 
-### PRINT ### 27
+### PRINT ###
 ## ITOA SETUP ##
     0x91007FE6 # ADD x6,SP,#31 ; x6 = pointer to stack buffer
     0xD2800007 # MOV x7,#0 ; x7 = digit count
@@ -169,9 +169,9 @@
 ### END PRINT ###
 
 ## JUMP BACK TO START UNLESS EXIT ##
-0x17FFFE3C # B -452 ; jump back to start
+0x17FFFF8F # B -113 ; jump back to start
 
-### EXIT ### 4
+### EXIT ###
     0x910043FF  # ADD SP,SP,#16  ; restore stack before exit
     0xD2800000  # MOV x0,#0 
     0xD2800030  # MOV x16,#1     ; syscall: exit

@@ -2,5 +2,5 @@
 
 #trace errors with: gcc -Wall -Wextra -fsanitize=address -g *.c -o runner
 gcc *.c -o runner
-./runner bin/${1:-'io/print.s'}
+./runner bin/${1:-'math/calc/prnc.s'}
 rm runner
