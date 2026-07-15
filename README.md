@@ -29,9 +29,13 @@ The functions can be called in `main` and printed with `print_binary` and `print
 
 ## Execution
 
-Execution has two phases; `parser.c`, which assembles a file into a `u_int32_t` array, and `runner.c`, which executes the program on JIT-allocated memory. This process can be shortcut with `run`, which takes a path from `/bin/` to a file.
+Execution has two phases: 
+- `parser.c` assembles a file into a `u_int32_t` array
+- `runner.c` executes the program on JIT-allocated memory. 
 
-Binary files are stored in `bin`, with the following subfolders:
+This process can be shortcut with `run`, which takes a path from `/bin/` to a file.
+
+Machine code files are stored in `/bin/`, with the following subfolders:
 - `/cmd/`: basic command examples
 - `/flow/`: control flow examples
   - `/cond/`: conditional jumps
