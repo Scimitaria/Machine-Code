@@ -111,67 +111,67 @@ _main:
         o_add:
             CMP W3,'+'
             B.NE o_sub
-            ADD x2,x17,x18
+            ADD X2,X17,X18
             B print
         o_sub:
             CMP W3,'-'
             B.NE o_mul
-            SUB x2,x17,x18
+            SUB X2,X17,X18
             B print
         o_mul:
             CMP W3,'*'
             B.NE o_div
-            MUL x2,x17,x18
+            MUL X2,X17,X18
             B print
         o_div:
             CMP W3,'/'
-            B.NE exit
-            UDIV x2,x17,x18
+            B.NE eXit
+            UDIV X2,X17,X18
             B print
 
     print:
         itoa_setup:
-            ADD x6,SP,31
-            MOV x7,0
-            MOV x8,10
-            CBNZ x2,itoa_loop
+            ADD X6,SP,31
+            MOV X7,0
+            MOV X8,10
+            CBNZ X2,itoa_loop
             MOV W4,'0'
-            STRB W4,[x6]
-            SUB x6,x6,1
-            MOV x7,1
+            STRB W4,[X6]
+            SUB X6,X6,1
+            MOV X7,1
             B itoa_done
         
         itoa_loop:
-            CBZ x2,itoa_done
-            UDIV x9,x2,x8
-            MSUB x10,x9,x8,x2
+            CBZ X2,itoa_done
+            UDIV X9,X2,X8
+            MSUB X10,X9,X8,X2
             ADD W10,W10,'0'
-            STRB W10,[x6]
-            SUB x6,x6,1
-            ADD x7,x7,1
-            MOV x2,x9
+            STRB W10,[X6]
+            SUB X6,X6,1
+            ADD X7,X7,1
+            MOV X2,X9
             B itoa_loop
 
         itoa_done:
-            ADD x6,x6,1
+            ADD X6,X6,1
             MOV W5,10
             STRB W5,[X6,X7]
-            ADD x7,x7,1
+            ADD X7,X7,1
         
         print_res:
-            MOV x1,x6
-            MOV x0,1
-            MOV x2,x7
-            MOV x16,4
-            SVC 0x80
+            MOV X1,X6
+            MOV X0,1
+            MOV X2,X7
+            MOV X16,4
+            SVC 0X80
 
         B load_num1
 
-    exit:
+    eXit:
         ADD SP,SP,16
-        MOV x0,0
-        MOV x16,1
-        SVC 0x80
+        MOV X0,0
+        MOV X16,1
+        SVC 0X80
 
 prompt:
     .asciz "> "
