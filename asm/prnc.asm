@@ -1,8 +1,8 @@
 /*
 # # # # # # # # # # # # #
 # Important registers:  #
-# X17 - first number    #
-# X18 - second number   #
+# X20 - first number    #
+# X21 - second number   #
 # W3  - operation       #
 # X2  - result          #
 # # # # # # # # # # # # #
@@ -49,7 +49,7 @@ _main:
             B num1_atoi_loop
 
         num1_parse_done:
-            MOV X17,X2
+            MOV X20,X2
 
     load_num2:
         prompt_num2:
@@ -88,7 +88,7 @@ _main:
             B num2_atoi_loop
 
         num2_parse_done:
-            MOV X18,X2
+            MOV X21,X2
 
     load_op:
         prompt_op:
@@ -111,22 +111,22 @@ _main:
         o_add:
             CMP W3,'+'
             B.NE o_sub
-            ADD X2,X17,X18
+            ADD X2,X20,X21
             B print
         o_sub:
             CMP W3,'-'
             B.NE o_mul
-            SUB X2,X17,X18
+            SUB X2,X20,X21
             B print
         o_mul:
             CMP W3,'*'
             B.NE o_div
-            MUL X2,X17,X18
+            MUL X2,X20,X21
             B print
         o_div:
             CMP W3,'/'
             B.NE eXit
-            UDIV X2,X17,X18
+            UDIV X2,X20,X21
             B print
 
     print:

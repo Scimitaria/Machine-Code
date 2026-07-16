@@ -1,33 +1,31 @@
 # # # # # # # # # # # # #
 # Important registers:  #
-# X17 - first number    #
-# X18 - second number   #
+# X20 - first number    #
+# X21 - second number   #
 # W3  - operation       #
 # X2  - result          #
 # # # # # # # # # # # # #
 
-0xD10043FF   # SUB  SP, SP, #16   ; reserve 16 bytes of writable stack space
-
 ### READ NUM1 INTO x17 ###
 ## PRINT PROMPT ##
-    0x10000EC1  # ADR prompt ; 472-bit offset
     0xD2800020  # MOV x0, #1 ; 1 = stdout
+    0x10000E61  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
     0xD4001001  # svc #0x80  ; syscall
 
 ## GET INPUT ##
     0xD2800000   # MOV  x0, #0        ; stdin
-    0x910003E1   # ADD  x1, SP        ; buffer = stack pointer
+    0x8B3F63E1   # ADD  x1, SP, XZR   ; buffer = stack pointer
     0xD2800102   # MOV  x2, #8        ; read up to 8 bytes
     0xD2800070   # MOV  x16,#3        ; syscall: read
     0xD4001001   # SVC  #0x80
     0xAA0003F3   # MOV  x19,x0        ; x19 = # of bytes read
 
 ## ATOI SETUP ##
-    0x910003E1   # ADD x1,SP    ; buffer = stack pointer
-    0xD2800002   # MOV x2,#0    ; x2 = accumulator ; val goes here
-    0xD2800003   # MOV x3,#0    ; x3 = index ; counts through bytes
+    0x8B3F63E1   # ADD x1,SP,XZR ; buffer = stack pointer
+    0xD2800002   # MOV x2,#0     ; x2 = accumulator ; val goes here
+    0xD2800003   # MOV x3,#0     ; x3 = index ; counts through bytes
 
 ## ATOI PARSE LOOP ##
     0xEB13007F   # CMP x3,x19
@@ -44,30 +42,30 @@
     0x91000463   # ADD x3,x3,#1 ; i++
     0x17FFFFF4   # B -12 ; start of parse loop
 
-    0xAA0203F1 # MOV x17,x2
+    0xAA0203F4 # MOV x20,x2
 ### NUM1 STORED ###
 
 
 ### READ NUM2 INTO x18 ###
 ## PRINT PROMPT ##
-    0x10000B41  # ADR prompt ; 360-bit offset
     0xD2800020  # MOV x0, #1 ; 1 = stdout
+    0x10000AE1  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16, #4 ; set up syscall for 'write'
     0xD4001001  # svc #0x80 ; syscall
 
 ## GET INPUT ##
     0xD2800000   # MOV  x0, #0        ; stdin
-    0x910003E1   # ADD  x1, SP        ; buffer = stack pointer
+    0x8B3F63E1   # ADD  x1, SP, XZR   ; buffer = stack pointer
     0xD2800102   # MOV  x2, #8        ; read up to 8 bytes
     0xD2800070   # MOV  x16,#3        ; syscall: read
     0xD4001001   # SVC  #0x80
     0xAA0003F3   # MOV  x19,x0        ; x19 = # of bytes read
 
 ## ATOI SETUP ##
-    0x910003E1   # ADD x1,SP    ; buffer = stack pointer
-    0xD2800002   # MOV x2,#0    ; x2 = accumulator ; val goes here
-    0xD2800003   # MOV x3,#0    ; x3 = index ; counts through bytes
+    0x8B3F63E1   # ADD  x1, SP, XZR ; buffer = stack pointer
+    0xD2800002   # MOV x2,#0        ; x2 = accumulator ; val goes here
+    0xD2800003   # MOV x3,#0        ; x3 = index ; counts through bytes
 
 ## ATOI PARSE LOOP ##
     0xEB13007F   # CMP x3,x19
@@ -84,23 +82,24 @@
     0x91000463   # ADD x3,x3,#1 ; i++
     0x17FFFFF4   # B -12 ; start of parse loop
 
-    0xAA0203F2 # MOV x18,x2
+    0xAA0203F5 # MOV x21,x2
 ### NUM2 STORED ###
 
 ### READ OPERATION INTO W3 ###
 ## PRINT PROMPT ##
-    0x100007C1  # ADR prompt ; 248-bit offset
     0xD2800020  # MOV x0, #1 ; 1 = stdout
+    0x10000761  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
     0xD4001001  # svc #0x80  ; syscall
 
 ## READ INTO W3 ##
     0xD2800000   # MOV  X0, #0        ; stdin
-    0x910003E1   # ADD  X1, SP        ; buffer = stack pointer
+    0x8B3F63E1   # ADD  X1, SP, XZR   ; buffer = stack pointer
     0xD2800102   # MOV  X2, #8        ; read up to 8 bytes
     0xD2800070   # MOV  X16, #3       ; syscall: read
     0xD4001001   # SVC  #0x80
+    0xAA0003F3   # MOV  X19, X0
     0x394003E3   # LDRB W3,[SP]
 ### OP STORED
 
@@ -108,27 +107,23 @@
 ## ADD ##
     0x7100AC7F # CMP W3,#'+'
     0x54000061 # B.NE 3 ; skip to -
-    0x8B120222 # ADD x2,x17,x18
-    0x14000010 # B 16 ; jump to print
+    0x8B150282 # ADD x2,x20,x21
+    0x1400000D # B print
 ## SUB ##
     0x7100B47F # CMP W3,#'-'
     0x54000061 # B.NE 3 ; skip to *
-    0xCB120222 # SUB x2,x17,x18
-    0x1400000C # B 12 ; jump to print
+    0xCB150282 # SUB x2,x20,x21
+    0x14000009 # B 9 ; jump to print
 ## MUL ##
     0x7100A87F # CMP W3,#'*'
     0x54000061 # B.NE 3 ; skip to /
-    0xDB110242 # MUL x2,x17,x18
-    0x14000008 # B 8 ; jump to print
+    0x9B157E82 # MUL x2,x20,x21
+    0x14000005 # B 5 ; jump to print
 ## DIV ##
     0x7100BC7F # CMP W3,#'/'
-    0x54000061 # B.NE 3 ; skip to e
-    0x9AD20A22 # DIV x2,x17,x18
-    0x14000004 # B 4 ; jump to print
-## EXIT ##
-    0x71008C7F # CMP W3,#'e'
-    0x540003C0 # B.EQ 30 ; jump to exit
-0x17FFFFAB # B -85 ; jump back to start
+    0x540003E1 # B.NE ; skip to exit
+    0x9AD50A82 # DIV x2,x20,x21
+    0x14000001 # B 1 ; jump to print
 ### END OPERATIONS ###
 
 ### PRINT ###
@@ -169,7 +164,7 @@
 ### END PRINT ###
 
 ## JUMP BACK TO START UNLESS EXIT ##
-0x17FFFF8F # B -113 ; jump back to start
+0x17FFFF91 # B ; jump back to start
 
 ### EXIT ###
     0x910043FF  # ADD SP,SP,#16  ; restore stack before exit
@@ -179,4 +174,4 @@
 
 
 ### TEXT ###
-    0x0000203E  # prompt: '> '
+    0x203E  # prompt: '> '

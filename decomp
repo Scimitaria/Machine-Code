@@ -1,6 +1,6 @@
 #!/bin/zsh
 
 name=$1:t:r
-as -o $name.o $1
+as -o $name.o asm/$1
 objdump -d $name.o
 rm $name.o
