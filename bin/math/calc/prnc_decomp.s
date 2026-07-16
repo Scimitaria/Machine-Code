@@ -29,7 +29,7 @@
 0x91000463 #     add     x3, x3, #0x1
 0x17fffff4 #     b       0x38 <num1_atoi_loop>
 
-0xaa0203f1 #     mov     x17, x2
+0xaa0203f4 #     mov     x20, x2
 
 0xd2800020 #     mov     x0, #0x1                ; =1
 0x10000ae1 #     adr     x1, 0x1d0 <prompt>
@@ -62,7 +62,7 @@
 0x91000463 #     add     x3, x3, #0x1
 0x17fffff4 #     b       0xa8 <num2_atoi_loop>
 
-0xaa0203f2 #     mov     x18, x2
+0xaa0203f5 #     mov     x21, x2
 
 0xd2800020 #     mov     x0, #0x1                ; =1
 0x10000761 #     adr     x1, 0x1d0 <prompt>
@@ -80,22 +80,22 @@
 
 0x7100ac7f #     cmp     w3, #0x2b
 0x54000061 #     b.ne    0x120 <o_sub>
-0x8b120222 #     add     x2, x17, x18
+0x8b150282 #     add     x2, x20, x21
 0x1400000d #     b       0x150 <print>
 
 0x7100b47f #     cmp     w3, #0x2d
 0x54000061 #     b.ne    0x130 <o_mul>
-0xcb120222 #     sub     x2, x17, x18
+0xcb150282 #     sub     x2, x20, x21
 0x14000009 #     b       0x150 <print>
 
 0x7100a87f #     cmp     w3, #0x2a
 0x54000061 #     b.ne    0x140 <o_div>
-0x9b127e22 #     mul     x2, x17, x18
+0x9b157e82 #     mul     x2, x20, x21
 0x14000005 #     b       0x150 <print>
 
 0x7100bc7f #     cmp     w3, #0x2f
 0x540003e1 #     b.ne    0x1c0 <exit>
-0x9ad20a22 #     udiv    x2, x17, x18
+0x9ad50a82 #     udiv    x2, x20, x21
 0x14000001 #     b       0x150 <print>
 
 0x91007fe6 #     add     x6, sp, #0x1f
@@ -135,4 +135,4 @@
 0xd2800030 #     mov     x16, #0x1               ; =1
 0xd4001001 #     svc     #0x80
 
-0x203e
+0x203e # '> '
