@@ -3,4 +3,7 @@
 name=$1:t:r
 as -o $name.o asm/$1
 ld -o $name $name.o -lSystem -syslibroot $(xcrun --show-sdk-path)
+
 ./$name
+
+rm $name $name.o
