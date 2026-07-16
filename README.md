@@ -35,6 +35,8 @@ Execution has two phases:
 
 This process can be shortcut with `run`, which takes a path from `/bin/` to a file.
 
+ARM64 Assembly files are stored in `/asm/`.
+
 Machine code files are stored in `/bin/`, with the following subfolders:
 - `/cmd/`: basic command examples
 - `/flow/`: control flow examples
@@ -43,3 +45,12 @@ Machine code files are stored in `/bin/`, with the following subfolders:
   - `/conv/`: type conversions for numeric printing
 - `/math/`: mathematical operations
   - `/calc/`: CLI calculator prototypes
+
+---
+
+## Scripts
+The repository contains the following Zsh scripts:
+- `run`: takes a path from `/bin/` and runs a machine code file.
+- `gen`: runs the generator.
+- `run_asm`: takes a path from `/asm/` and runs an assembly file.
+- `decomp`: takes a path from `/asm/` and disassembles an assembly file into machine code.
