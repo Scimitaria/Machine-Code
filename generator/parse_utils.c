@@ -71,6 +71,10 @@ op parse_op(FILE* input){
             c = getc(input);
             o.isReg = true;
             o.isX = false;
+        default:
+            printf("Attempted to read non-prefix value %c", c);
+            error("in parse_op");
+
 
     }
     if(!isdigit(c)){

@@ -2,7 +2,6 @@
 
 u_int32_t readLine(FILE* input){
     char c = get(input);
-    printf("c = %d (0x%02X)\n", c, c);
     switch(c){
         case 'a': //ADD, ADR
             if(get(input)=='d'){
@@ -103,14 +102,6 @@ u_int32_t readLine(FILE* input){
 u_int32_t* parse(char* fpath, int* size){
     FILE *file = fopen(fpath, "r");
     if (file == NULL) error("Error opening file");
-
-    int ch;
-    for (int i = 0; i < 4; i++) {
-        ch = getc(file);
-        printf("%02X ", ch & 0xFF);
-    }
-    printf("\n");
-    rewind(file);
 
     u_int32_t* machine_code = malloc(sizeof(u_int32_t)*(*size));
     while(skipToNextToken(file)){
