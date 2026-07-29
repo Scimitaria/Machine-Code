@@ -14,7 +14,7 @@ Experimenting with parsing and executing raw machine code on macOS ARM64
 - `ADD`
 - `SUB`
 - `MUL`
-- `DIV`
+- `UDIV`
 - `MSUB`
 - `CMP`
 - `B`
