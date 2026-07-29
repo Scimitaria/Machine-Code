@@ -42,18 +42,21 @@ int32_t get_offset(FILE* input){
     return 0;
 }
 
-int readNumber(FILE* input, char c){
-    int val = c - '0';
-    while(isdigit(c)){
-        val *= 10;
-        val += (c - '0');
-        getc(input);
+int readNumber(FILE *input, int c){
+    int val = 0;
+
+    while (isdigit(c)) {
+        val = val * 10 + (c - '0');
+        c = getc(input);
     }
+
+    if (c != EOF) ungetc(c, input);
+
     return val;
 }
 op parse_op(FILE* input){
     skipToNextToken(input);
-    char c = tolower(peek(input));
+    char c = get(input);
     op o;
 
     switch(c){
@@ -71,11 +74,10 @@ op parse_op(FILE* input){
             c = getc(input);
             o.isReg = true;
             o.isX = false;
+            break;
         default:
-            printf("Attempted to read non-prefix value %c", c);
-            error("in parse_op");
-
-
+            o.isReg = false;
+            o.isX = false;
     }
     if(!isdigit(c)){
         printf("Attempted to read non-numeric value %c", c);

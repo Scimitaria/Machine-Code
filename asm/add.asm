@@ -1,4 +1,4 @@
 MOV x1,21
 ADD x2,x1,27
-ADD x0,x1,x3
+ADD x0,x1,x2
 RET
