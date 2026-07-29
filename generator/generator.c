@@ -253,8 +253,8 @@ uint32_t msub(uint8_t destination, uint8_t op1, uint8_t op2, uint8_t op3, bool i
 
     return code;
 }
-//generates div call
-uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator, bool isX){
+//generates udiv call
+uint32_t udiv(uint8_t destination, uint8_t numerator, uint8_t denominator, bool isX){
     uint32_t code = 0;
 
     code <<= 1;

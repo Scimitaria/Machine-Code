@@ -23,9 +23,15 @@ u_int32_t readLine(FILE* input){
         case 'c': //CBZ, CMP
             c = get(input);
             switch(c){
-                case 'b': 
-                    if(get(input)=='z') return parse_cbz(input);
-                    else perror("Input cb not followed by z");
+                case 'b':
+                    c = get(input);
+                    switch(c){
+                        case 'z': return parse_cbz(input,false);
+                        case 'n':
+                            if(get(input)=='z') return parse_cbz(input,true);
+                            else perror("Input cbn not followed by z");
+                        default: perror("Input cb not followed by z");
+                    }
                 case 'm':
                     if(get(input)=='p') return parse_cmp(input);
                     else perror("Input cm not followed by p");

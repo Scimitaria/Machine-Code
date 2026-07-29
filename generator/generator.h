@@ -19,5 +19,15 @@ typedef enum {
     ge = 0b1010, // >=
     lt = 0b1011, // <
     gt = 0b1100, // >
-    le = 0b1101  // <=
+    le = 0b1101, // <=
+    cond_count
 } cond;
+
+const char *const condStrings[] = {
+    [eq] = "eq",
+    [ne] = "ne",
+    [ge] = "ge",
+    [lt] = "lt",
+    [gt] = "gt",
+    [le] = "le"
+};
