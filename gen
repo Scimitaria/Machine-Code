@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+arg=""
+if [[ -n $1 ]]; then arg=asm/$1; fi
+
 gcc generator/*.c print.c  -o generate
-./generate
+./generate $arg
 rm generate
