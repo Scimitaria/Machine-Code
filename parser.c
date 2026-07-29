@@ -50,7 +50,7 @@ u_int32_t* parse_hex(char* fpath){
             //reset string
             strncpy(str, "", sizeof(str) - 1);
 
-            print_binary(machine_code[current_size-1]);
+            //print_binary(machine_code[current_size-1],0);
         }
     }
 
@@ -81,14 +81,27 @@ u_int32_t* parse_binary(char *fpath){
 
     char c = peek(file);
     while(c!=EOF){
-        if(c=='#') skipLine(file);//comment
+        if(c=='#'){
+            //comment
+            printf("Skipping comments...\n");
+            skipLine(file);
+            c = peek(file);
+            continue;
+        }
+        if(isspace(c)||c=='\n'){
+            //not binary
+            getc(file);
+            c = peek(file);
+            continue;
+        }
         u_int32_t code = parse_binary_op(file);
 
         current_size++;
         machine_code = realloc(machine_code, current_size * sizeof(u_int32_t));
         machine_code[current_size-1] = code;
 
-        //print_binary(code);
+        //printf("%c, %d\n", c, current_size);
+        //print_binary(code,0);
         c = peek(file);
     }
     return machine_code;
