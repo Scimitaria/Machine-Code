@@ -1,25 +1,4 @@
-#include "../print.h"
-#include <stdint.h>
-#include <stdbool.h>
-
-//fixed hexcodes
-#define nop 0xD503201F //idle
-#define ret 0xD65F03C0 //return
-#define svc 0xD4001001 //syscall
-
-//registers
-#define sp (uint8_t)31 //stack pointer reg
-#define xzr (uint8_t)31 //zero register???
-
-//common opcodes for b.cond
-typedef enum {
-    eq = 0b0000, // ==
-    ne = 0b0001, // !=
-    ge = 0b1010, // >=
-    lt = 0b1011, // <
-    gt = 0b1100, // >
-    le = 0b1101  // <=
-} cond;
+#include "generator.h"
 
 //generates mov call
 uint32_t mov(uint8_t reg, uint16_t val, bool isX){
@@ -301,6 +280,7 @@ uint32_t div(uint8_t destination, uint8_t numerator, uint8_t denominator, bool i
     return code;
 }
 
+/* BRANCH */
 //generates b (branch jump)
 uint32_t b(int32_t offset){
     uint32_t code = 0b000101; //B opcode
@@ -397,6 +377,7 @@ uint32_t cmp(uint8_t op1, uint16_t op2, bool is_immediate, bool isX){
     return code;
 }
 
+/* LOAD/STORE */
 //generates strb (store byte) w/o bounds
 uint32_t strb_nb(uint8_t source, uint8_t base, bool isX){
     uint32_t code = 0;
@@ -526,9 +507,4 @@ uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
     code |= destination;
 
     return code;
-}
-
-int main(){
-    print_hex(b(-452));
-    return 0;
 }
