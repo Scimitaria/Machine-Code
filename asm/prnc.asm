@@ -1,12 +1,10 @@
-/*
-# # # # # # # # # # # # #
-# Important registers:  #
-# X20 - first number    #
-# X21 - second number   #
-# W3  - operation       #
-# X2  - result          #
-# # # # # # # # # # # # #
-*/
+//# # # # # # # # # # # # #
+//# Important registers:  #
+//# X20 - first number    #
+//# X21 - second number   #
+//# W3  - operation       #
+//# X2  - result          #
+//# # # # # # # # # # # # #
 
 .global _main
 .align 4
