@@ -1,7 +1,6 @@
-#include <stdio.h>
+#include "../print.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include <inttypes.h>
 
 //fixed hexcodes
 #define nop 0xD503201F //idle
@@ -21,18 +20,6 @@ typedef enum {
     gt = 0b1100, // >
     le = 0b1101  // <=
 } cond;
-
-void print_binary(uint32_t code) {
-    printf("0b");
-    for (int i = 31; i >= 0; i--) {
-        uint32_t bit = (code >> i) & 1;
-        printf("%u", bit);
-    }
-    printf("\n");
-}
-void print_hex(u_int32_t code){
-    printf("0x%" PRIX32 "\n",code);
-}
 
 //generates mov call
 uint32_t mov(uint8_t reg, uint16_t val, bool isX){

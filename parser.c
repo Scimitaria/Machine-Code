@@ -1,14 +1,5 @@
 #include "parser.h"
 
-void print_binary(uint32_t code) {
-    printf("0b");
-    for (int i = 31; i >= 0; i--) {
-        uint32_t bit = (code >> i) & 1;
-        printf("%u", bit);
-    }
-    printf("\n");
-}
-
 char peek(FILE *input){
     char c = getc(input);
     ungetc(c,input);

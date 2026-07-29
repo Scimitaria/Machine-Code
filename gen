@@ -1,5 +1,5 @@
 #!/bin/zsh
 
-gcc generator/*.c -o generate
+gcc generator/*.c print.c  -o generate
 ./generate
 rm generate
