@@ -50,7 +50,7 @@ u_int32_t* parse_hex(char* fpath){
             //reset string
             strncpy(str, "", sizeof(str) - 1);
 
-            //printf("0x%" PRIX32 "\n",machine_code[current_size-1]);
+            print_binary(machine_code[current_size-1]);
         }
     }
 
@@ -88,7 +88,7 @@ u_int32_t* parse_binary(char *fpath){
         machine_code = realloc(machine_code, current_size * sizeof(u_int32_t));
         machine_code[current_size-1] = code;
 
-        print_binary(code);
+        //print_binary(code);
         c = peek(file);
     }
     return machine_code;
