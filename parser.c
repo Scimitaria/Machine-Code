@@ -61,14 +61,21 @@ u_int32_t* parse_hex(char* fpath){
 u_int32_t parse_binary_op(FILE* file){
     u_int32_t code = 0b00000000000000000000000000000000;
 
-    for(int i=31; i>=0; i--){
+    int i=31;
+    while(i>=0){
         char c = peek(file);
-        if(isspace(c)||(c==EOF)||(c=='\n')||(c=='#')) return code;
+        if(isspace(c)){
+            //skip whitespace
+            getc(file);
+            continue;
+        }
+        if((c==EOF)||(c=='\n')||(c=='#')) return code;
         switch(getc(file)){
             case '1': code |= (1<<i);break;
             case '0': break;
             default: perror("Non-binary character");
         }
+        i--;
     }
     return code;
 }
@@ -83,7 +90,6 @@ u_int32_t* parse_binary(char *fpath){
     while(c!=EOF){
         if(c=='#'){
             //comment
-            printf("Skipping comments...\n");
             skipLine(file);
             c = peek(file);
             continue;
@@ -101,7 +107,7 @@ u_int32_t* parse_binary(char *fpath){
         machine_code[current_size-1] = code;
 
         //printf("%c, %d\n", c, current_size);
-        //print_binary(code,0);
+        print_binary(code,0);
         c = peek(file);
     }
     return machine_code;
