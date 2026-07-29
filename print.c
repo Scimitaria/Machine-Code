@@ -11,3 +11,13 @@ void print_binary(u_int32_t code, int header) {
 void print_hex(u_int32_t code){
     printf("0x%" PRIX32 "\n",code);
 }
+
+char peek(FILE *input){
+    char c = getc(input);
+    ungetc(c,input);
+    return c;
+}
+void skipLine(FILE* input){
+  char c = getc(input);
+  while(c != '\n' && c != EOF) c= getc(input);
+}

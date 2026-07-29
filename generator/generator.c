@@ -290,7 +290,7 @@ uint32_t b(int32_t offset){
     return code;
 }
 //generates b.cond (conditional jump)
-uint32_t b_cond(uint8_t cond, int32_t offset) {
+uint32_t b_cond(uint8_t cond, int32_t offset){
     uint32_t code = 0b01010100;      // B.cond opcode
 
     code <<= 19;

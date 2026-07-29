@@ -1,11 +1,20 @@
 #include "parse_ops.h"
 
+const char *const condStrings[] = {
+    [eq] = "eq",
+    [ne] = "ne",
+    [ge] = "ge",
+    [lt] = "lt",
+    [gt] = "gt",
+    [le] = "le"
+};
+
 uint32_t parse_add(FILE* input){
     op dest = parse_op(input);
-    assert(dest.isReg,"Destination for add must be a register");
+    assertCondition(dest.isReg,"Destination for add must be a register");
     skipToNextToken(input);
     op op1 = parse_op(input);
-    assert(op1.isReg,"First operand for add must be a register");
+    assertCondition(op1.isReg,"First operand for add must be a register");
     skipToNextToken(input);
     op op2 = parse_op(input);
     skipToNextToken(input);
@@ -19,7 +28,7 @@ uint32_t parse_adr(FILE* input){
     assertCondition(dest.isReg,"ADR destination must be a register");
     int32_t offset = get_offset(input);
     skipToNextToken(input);
-    return adr(dest,offset);
+    return adr(dest.val,offset);
 }
 uint32_t parse_b(FILE* input){
     int32_t offset = get_offset(input);
@@ -28,29 +37,30 @@ uint32_t parse_b(FILE* input){
 }
 uint32_t parse_b_cond(FILE* input){
     cond con = cond_count;
-    char condStr[3] = sprintf(condStr,"%c%c", get(input), get(input));
+    char condStr[3];
+    sprintf(condStr,"%c%c", get(input), get(input));
     for(int i=0; i<cond_count; i++){
-        if(strcmp(condStr,condStrings)==0){
+        if(strcmp(condStr,condStrings[i])==0){
             con = (cond)i;
             break;
         }
     }
-    if(con = cond_count) perror("Invalid condition in b.cond");
+    if(con == cond_count) error("Invalid condition in b.cond");
     int32_t offset = get_offset(input);
     skipToNextToken(input);
     return b_cond(con,offset);
 }
 uint32_t parse_cbz(FILE* input, bool isCBNZ){
     op dest = parse_op(input);
-    assert(dest.isReg,"Destination for CBZ/CBNZ must be a register");
+    assertCondition(dest.isReg,"Destination for CBZ/CBNZ must be a register");
     skipToNextToken(input);
     int32_t offset = get_offset(input);
     skipToNextToken(input);
-    return cbz(dest,offset,isCBNZ,dest.isX);
+    return cbz(dest.val,offset,isCBNZ,dest.isX);
 }
 uint32_t parse_cmp(FILE* input){
     op op1 = parse_op(input);
-    assert(op1.isReg,"First operand for cmp must be a register");
+    assertCondition(op1.isReg,"First operand for cmp must be a register");
     skipToNextToken(input);
     op op2 = parse_op(input);
     skipToNextToken(input);
@@ -61,17 +71,17 @@ uint32_t parse_cmp(FILE* input){
 }
 uint32_t parse_udiv(FILE* input){
     op dest = parse_op(input);
-    assert(dest.isReg,"Destination for div must be a register");
+    assertCondition(dest.isReg,"Destination for div must be a register");
     skipToNextToken(input);
     op op1 = parse_op(input);
-    assert(op1.isReg,"First operand for div must be a register");
+    assertCondition(op1.isReg,"First operand for div must be a register");
     skipToNextToken(input);
     op op2 = parse_op(input);
-    assert(op2.isReg,"Second operand for div must be a register");
+    assertCondition(op2.isReg,"Second operand for div must be a register");
     skipToNextToken(input);
 
     bool isX = dest.isX || op1.isX || op2.isX;
-    return u(dest.val,op1.val,op2.val,isX);
+    return udiv(dest.val,op1.val,op2.val,isX);
 }
 uint32_t parse_ldrb(FILE* input){
     op dest = parse_op(input);
@@ -97,7 +107,7 @@ uint32_t parse_ldrb(FILE* input){
 }
 uint32_t parse_mov(FILE* input){
     op dest = parse_op(input);
-    assert(dest.isReg,"Destination for mov must be a register");
+    assertCondition(dest.isReg,"Destination for mov must be a register");
     skipToNextToken(input);
     op src = parse_op(input);
     skipToNextToken(input);
@@ -108,16 +118,16 @@ uint32_t parse_mov(FILE* input){
 }
 uint32_t parse_msub(FILE* input){
     op dest = parse_op(input);
-    assert(dest.isReg,"Destination for add must be a register");
+    assertCondition(dest.isReg,"Destination for add must be a register");
     skipToNextToken(input);
     op op1 = parse_op(input);
-    assert(op1.isReg,"First operand for add must be a register");
+    assertCondition(op1.isReg,"First operand for add must be a register");
     skipToNextToken(input);
     op op2 = parse_op(input);
-    assert(op2.isReg,"Second operand for add must be a register");
+    assertCondition(op2.isReg,"Second operand for add must be a register");
     skipToNextToken(input);
     op op3 = parse_op(input);
-    assert(op3.isReg,"Third operand for add must be a register");
+    assertCondition(op3.isReg,"Third operand for add must be a register");
     skipToNextToken(input);
 
     bool isX = dest.isX || op1.isX || op2.isX;
@@ -125,13 +135,13 @@ uint32_t parse_msub(FILE* input){
 }
 uint32_t parse_mul(FILE* input){
     op dest = parse_op(input);
-    assert(dest.isReg,"Destination for mul must be a register");
+    assertCondition(dest.isReg,"Destination for mul must be a register");
     skipToNextToken(input);
     op op1 = parse_op(input);
-    assert(op1.isReg,"First operand for mul must be a register");
+    assertCondition(op1.isReg,"First operand for mul must be a register");
     skipToNextToken(input);
     op op2 = parse_op(input);
-    assert(op2.isReg,"Second operand for mul must be a register");
+    assertCondition(op2.isReg,"Second operand for mul must be a register");
     skipToNextToken(input);
 
     bool isX = dest.isX || op1.isX || op2.isX;
@@ -161,10 +171,10 @@ uint32_t parse_strb(FILE* input){
 }
 uint32_t parse_sub(FILE* input){
     op dest = parse_op(input);
-    assert(dest.isReg,"Destination for sub must be a register");
+    assertCondition(dest.isReg,"Destination for sub must be a register");
     skipToNextToken(input);
     op op1 = parse_op(input);
-    assert(op1.isReg,"First operand for sub must be a register");
+    assertCondition(op1.isReg,"First operand for sub must be a register");
     skipToNextToken(input);
     op op2 = parse_op(input);
     skipToNextToken(input);
@@ -174,7 +184,7 @@ uint32_t parse_sub(FILE* input){
     return sub(dest.val,op1.val,op2.val,isImmediate,isX);
 }
 uint32_t parse_svc(FILE* input){
-    readNumber(input);
+    parse_op(input);
     skipToNextToken(input);
     return svc;
 }

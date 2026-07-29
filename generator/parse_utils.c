@@ -1,5 +1,9 @@
 #include "parse_utils.h"
 
+noreturn void error(char* msg){
+  fprintf(stderr, "Error: %s\n", msg);
+  exit(EXIT_FAILURE);
+}
 void assertCondition(bool condition, char* errmsg){
   if (!condition) {
     fprintf(stderr, "Assertion failed: %s\n", errmsg);
@@ -27,7 +31,8 @@ bool skipToNextToken(FILE* input){
 }
 
 char get(FILE* input){
-    return tolower(getc(input));
+    int c = getc(input);
+    return c == EOF ? EOF : tolower((unsigned char)c);
 }
 
 int32_t get_offset(FILE* input){
@@ -38,10 +43,10 @@ int32_t get_offset(FILE* input){
 }
 
 int readNumber(FILE* input, char c){
-    int val = atoi(c);
+    int val = c - '0';
     while(isdigit(c)){
         val *= 10;
-        val += atoi(c);
+        val += (c - '0');
         getc(input);
     }
     return val;
@@ -68,7 +73,10 @@ op parse_op(FILE* input){
             o.isX = false;
 
     }
-    if(!isdigit(c)) perror(sprintf("Attempted to read non-numeric value: %c", c));
+    if(!isdigit(c)){
+        printf("Attempted to read non-numeric value %c", c);
+        error("in parse_op");
+    }
     o.val = readNumber(input,c);
     return o;
 }

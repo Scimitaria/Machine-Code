@@ -2,6 +2,7 @@
 
 u_int32_t readLine(FILE* input){
     char c = get(input);
+    printf("c = %d (0x%02X)\n", c, c);
     switch(c){
         case 'a': //ADD, ADR
             if(get(input)=='d'){
@@ -9,16 +10,23 @@ u_int32_t readLine(FILE* input){
                 switch(c){
                     case 'd': return parse_add(input);
                     case 'r': return parse_adr(input);
-                    default: perror(sprintf("Input ad followed by %c rather than d or r", c));
+                    default: 
+                        printf("Input ad followed by %c", c);
+                        error("rather than d or r");
                 }
             }
-            else perror(sprintf("Input a followed by %c rather than d", c));
+            else{
+                printf("Input a followed by %c", c);
+                error("rather than d");
+            }
         case 'b': //B, B.COND
             c = get(input);
             switch(c){
                 case ' ': return parse_b(input);
                 case '.': return parse_b_cond(input);
-                default: perror(sprintf("Input b followed by %c rather than .", c));
+                default:
+                    printf("Input b followed by %c", c);
+                    error("rather than .");
             }
         case 'c': //CBZ, CMP
             c = get(input);
@@ -29,63 +37,80 @@ u_int32_t readLine(FILE* input){
                         case 'z': return parse_cbz(input,false);
                         case 'n':
                             if(get(input)=='z') return parse_cbz(input,true);
-                            else perror("Input cbn not followed by z");
-                        default: perror("Input cb not followed by z");
+                            else error("Input cbn not followed by z");
+                        default: error("Input cb not followed by z");
                     }
                 case 'm':
                     if(get(input)=='p') return parse_cmp(input);
-                    else perror("Input cm not followed by p");
-                default: perror(sprintf("Input c followed by %c rather than b or m", c));
+                    else error("Input cm not followed by p");
+                default: 
+                    printf("Input c followed by %c", c);
+                    error("rather than b or m");
             }
         case 'd': //DIV
             if(get(input)=='i'&&get(input)=='v') return parse_udiv(input);
-            else perror("Input d not followed by iv");
+            else error("Input d not followed by iv");
         case 'l': //LDRB
             if(get(input)=='d'&&get(input)=='r'&&get(input)=='b') return parse_ldrb(input);
-            else perror("Input l not followed by drb");
+            else error("Input l not followed by drb");
         case 'm': //MOV, MSUB, MUL
             c = get(input);
             switch(c){
                 case 'o':
                     if(get(input)=='v') return parse_mov(input);
-                    else perror("Input mo not followed by v");
+                    else error("Input mo not followed by v");
                 case 's':
                     if(get(input)=='u'&&get(input)=='b') return parse_msub(input);
-                    else perror("Input ms not followed by ub");
+                    else error("Input ms not followed by ub");
                 case 'u':
                     if(get(input)=='l') return parse_mul(input);
-                    else perror("Input mu not followed by l");
-                default: perror(sprintf("Input m followed by %c rather than o, s, or u", c));
+                    else error("Input mu not followed by l");
+                default:
+                    printf("Input m followed by %c", c);
+                    error("rather than o, s, or u");
             }
         case 'n': //NOP
             if(get(input)=='o'&&get(input)=='p') return nop;
-            else perror("Input n not followed by op");
+            else error("Input n not followed by op");
         case 'r': //RET
             if(get(input)=='e'&&get(input)=='t') return ret;
-            else perror("Input r not followed by et");
+            else error("Input r not followed by et");
         case 's': //STRB, SUB, SVC
             c = get(input);
             switch(c){
                 case 't':
                     if(get(input)=='r'&&get(input)=='b') return parse_strb(input);
-                    else perror("Input st not followed by rb");
+                    else error("Input st not followed by rb");
                 case 'u':
                     if(get(input)=='b') return parse_sub(input);
-                    else perror("Input su not followed by b");
+                    else error("Input su not followed by b");
                 case 'v':
                     if(get(input)=='c') return parse_svc(input);
-                    else perror("Input sv not followed by c");
-                default: perror(sprintf("Input s followed by %c rather than t, u, or v", c));
+                    else error("Input sv not followed by c");
+                default:
+                    printf("Input s followed by %c", c);
+                    error("rather than t, u, or v");
             }
         case 'u': //UDIV
             if(get(input)=='d'&&get(input)=='i'&&get(input)=='v') return parse_udiv(input);
-            else perror("Input u not followed by div");
+            else error("Input u not followed by div");
+        default:
+            printf("Symbol: %c\n", c);
+            error("unrecognized symbol");
     }
 }
 
 u_int32_t* parse(char* fpath, int* size){
     FILE *file = fopen(fpath, "r");
-    if (file == NULL) perror("Error opening file");
+    if (file == NULL) error("Error opening file");
+
+    int ch;
+    for (int i = 0; i < 4; i++) {
+        ch = getc(file);
+        printf("%02X ", ch & 0xFF);
+    }
+    printf("\n");
+    rewind(file);
 
     u_int32_t* machine_code = malloc(sizeof(u_int32_t)*(*size));
     while(skipToNextToken(file)){
@@ -102,7 +127,7 @@ int main(int argc, char *argv[]){
     //manual generation goes here
 
     if(argc!=0){
-        char* fpath = argv[0];
+        char* fpath = argv[1];
 
         int mc_size = 0;
         u_int32_t* machine_code = parse(fpath,&mc_size);

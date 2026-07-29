@@ -1,16 +1,5 @@
 #include "parser.h"
 
-char peek(FILE *input){
-    char c = getc(input);
-    ungetc(c,input);
-    return c;
-}
-
-void skipLine(FILE* input){
-  char c = getc(input);
-  while(c != '\n' && c != EOF) c= getc(input);
-}
-
 const char* get_file_extension(const char *fpath) {
     // Find the last occurrence of '.'
     const char *dot = strchr(fpath, '.');

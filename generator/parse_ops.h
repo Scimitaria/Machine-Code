@@ -1,5 +1,6 @@
 #pragma once
 #include "parse_utils.h"
+#include <string.h>
 
 uint32_t parse_add(FILE* input);
 uint32_t parse_adr(FILE* input);

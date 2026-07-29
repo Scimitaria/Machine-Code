@@ -1,6 +1,8 @@
 #pragma once
 #include "generator.h"
 #include <stdlib.h>
+#include <ctype.h>
+#include <stdnoreturn.h>
 
 typedef struct{
     int val;
@@ -14,3 +16,4 @@ bool skipToNextToken(FILE* input);
 char get(FILE* input);
 int32_t get_offset(FILE* input);
 op parse_op(FILE* input);
+noreturn void error(char* msg);
