@@ -124,7 +124,7 @@ u_int32_t* parse(char* fpath, int* size){
 int main(int argc, char *argv[]){
     //manual generation goes here
 
-    if(argc!=0){
+    if(argc>1){
         char* fpath = argv[1];
 
         int mc_size = 0;
