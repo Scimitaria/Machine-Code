@@ -50,6 +50,12 @@ Hex files have the `.s` extension, while binary files have `.bin.s`. The hex fil
 
 ---
 
+## Parsing
+
+`gen` can take a filepath from `/asm/` as an argument, which will cue `asm_parser.c` to attempt to disassemble it. This functionality is partially deprecated due to issues with reserved registers and branch offsets, but still works on `hello.asm`.
+
+---
+
 ## Scripts
 The repository contains the following Zsh scripts:
 - `run`: takes a path from `/bin/` and runs a machine code file. Runs `/bin/math/calc/prnc.s` by default.
