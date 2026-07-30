@@ -36,10 +36,41 @@ char get(FILE* input){
 }
 
 int32_t get_offset(FILE* input){
-    FILE* BOF = input;
-    rewind(BOF); //start of file
-
     return 0;
+}
+
+int read_u32(FILE *fp, uint32_t *out){
+    uint32_t word = 0;
+
+    for (int i = 0; i < 4; i++) {
+        int c = fgetc(fp);
+
+        if (c == '\\') {
+            c = fgetc(fp);
+            switch (c) {
+            case 'n': c = '\n'; break;
+            case 't': c = '\t'; break;
+            case '\\': c = '\\'; break;
+            case '"': c = '"'; break;
+            }
+        }
+
+        if(c=='\"') {
+            if (i == 0) return 0; // No more data
+            *out = word;         // Partial word, zero-padded
+            return 2;
+        }
+        if (c == EOF) {
+            if (i == 0) return 0; // No more data
+            *out = word;         // Partial word, zero-padded
+            return 1;
+        }
+
+        word |= (uint32_t)(uint8_t)c << (8 * i);
+    }
+
+    *out = word;
+    return 1;
 }
 
 int readNumber(FILE *input, int c){

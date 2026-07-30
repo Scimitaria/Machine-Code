@@ -93,9 +93,12 @@ u_int32_t readLine(FILE* input){
         case 'u': //UDIV
             if(get(input)=='d'&&get(input)=='i'&&get(input)=='v') return parse_udiv(input);
             else error("Input u not followed by div");
+        case '.': //.asciz
+            if(get(input)=='a'&&get(input)=='s'&&get(input)=='c'&&get(input)=='i'&&get(input)=='z') return parse_string(input);
         default:
-            printf("Symbol: %c\n", c);
-            error("unrecognized symbol");
+            while(!isspace(c)) c=getc(input);
+            skipToNextToken(input);
+            return readLine(input);
     }
 }
 
@@ -107,10 +110,13 @@ u_int32_t* parse(char* fpath, int* size){
     while(skipToNextToken(file)){
         (*size)++;
         u_int32_t code = readLine(file);
+        if(code==0x00000000) continue; //skip edge cases
+        print_hex(code);
         machine_code = realloc(machine_code, (*size) * sizeof(u_int32_t));
         machine_code[(*size)-1] = code;
     }
 
+    fclose(file);
     return machine_code;
 }
 
@@ -123,7 +129,9 @@ int main(int argc, char *argv[]){
         int mc_size = 0;
         u_int32_t* machine_code = parse(fpath,&mc_size);
 
-        for(int i=0; i<mc_size; i++) print_hex(machine_code[i]);
+        //for(int i=0; i<mc_size; i++) print_hex(machine_code[i]);
+
+        free(machine_code);
     }
     return 0;
 }

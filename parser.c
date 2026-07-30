@@ -99,6 +99,7 @@ u_int32_t* parse_binary(char *fpath){
         print_binary(code,0);
         c = peek(file);
     }
+    fclose(file);
     return machine_code;
 }
 

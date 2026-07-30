@@ -21,12 +21,14 @@ uint32_t parse_add(FILE* input){
 
     bool isImmediate = !op2.isReg;
     bool isX = dest.isX || op1.isX || op2.isX;
+    printf("#ADD %d,%d,%d; isImmediate: %d, isX: %d\n", dest.val,op1.val,op2.val,isImmediate,isX);
     return add(dest.val,op1.val,op2.val,isImmediate,isX);
 }
 uint32_t parse_adr(FILE* input){
     op dest = parse_op(input);
     assertCondition(dest.isReg,"ADR destination must be a register");
     int32_t offset = get_offset(input);
+    printf("#ADR %d, %d\n", dest.val, offset);
     skipToNextToken(input);
     return adr(dest.val,offset);
 }
@@ -113,7 +115,8 @@ uint32_t parse_mov(FILE* input){
     skipToNextToken(input);
 
     bool isX = dest.isX || src.isX;
-    if(src.isReg) return mov(dest.val,src.val,isX);
+    printf("#MOV %d,%d; isImmediate: %d, isX: %d\n", dest.val,src.val,!src.isReg,isX);
+    if(!src.isReg) return mov(dest.val,src.val,isX);
     else return movreg(dest.val,src.val,isX);
 }
 uint32_t parse_msub(FILE* input){
@@ -131,6 +134,7 @@ uint32_t parse_msub(FILE* input){
     skipToNextToken(input);
 
     bool isX = dest.isX || op1.isX || op2.isX;
+    printf("#ADD %d,%d,%d, isX: %d\n", dest.val,op1.val,op2.val,isX);
     return msub(dest.val,op1.val,op2.val,op3.val,isX);
 }
 uint32_t parse_mul(FILE* input){
@@ -145,6 +149,7 @@ uint32_t parse_mul(FILE* input){
     skipToNextToken(input);
 
     bool isX = dest.isX || op1.isX || op2.isX;
+    printf("#MUL %d,%d,%d, isX: %d\n", dest.val,op1.val,op2.val,isX);
     return mul(dest.val,op1.val,op2.val,isX);
 }
 uint32_t parse_strb(FILE* input){
@@ -181,10 +186,31 @@ uint32_t parse_sub(FILE* input){
 
     bool isImmediate = !op2.isReg;
     bool isX = dest.isX || op1.isX || op2.isX;
+    printf("#SUB %d,%d,%d; isImmediate: %d, isX: %d\n", dest.val,op1.val,op2.val,isImmediate,isX);
     return sub(dest.val,op1.val,op2.val,isImmediate,isX);
 }
 uint32_t parse_svc(FILE* input){
     parse_op(input);
     skipToNextToken(input);
+    printf("#SVC #0x80\n");
     return svc;
+}
+uint32_t parse_string(FILE* input){
+    enum {
+        READ_DONE = 0,     // no word produced
+        READ_WORD = 1,     // produced a word, more may follow
+        READ_LAST = 2      // produced the final word
+    };
+    int status;
+
+    skipToNextToken(input);
+    getc(input); //skip "
+    uint32_t word;
+    do {
+        status = read_u32(input, &word);
+        if (status)
+            printf("0x%08X\n", word);
+    } while (status == READ_WORD);
+    skipToNextToken(input);
+    return 0x00000000; //we're printing here, so want to return a nonfunctional value
 }
