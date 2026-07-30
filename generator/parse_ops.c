@@ -29,12 +29,12 @@ uint32_t parse_adr(FILE* input){
     assertCondition(dest.isReg,"ADR destination must be a register");
     skipToNextToken(input);
     int32_t offset = get_offset(input);
-     //printf("#ADR %d, %d\n", dest.val, offset);
+    //printf("#ADR %d, %d\n", dest.val, offset);
     skipToNextToken(input);
     return adr(dest.val,offset);
 }
 uint32_t parse_b(FILE* input){
-    int32_t offset = get_offset(input);
+    int32_t offset = get_offset(input)/4;
     skipToNextToken(input);
     return b(offset);
 }
@@ -49,7 +49,7 @@ uint32_t parse_b_cond(FILE* input){
         }
     }
     if(con == cond_count) error("Invalid condition in b.cond");
-    int32_t offset = get_offset(input);
+    int32_t offset = get_offset(input)/4;
     skipToNextToken(input);
     return b_cond(con,offset);
 }

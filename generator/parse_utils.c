@@ -65,8 +65,15 @@ int32_t get_offset(FILE *fp) {
             return offset_bytes; // found it
         }
 
-        if (*p == '.')
-            continue; // directive, no instruction bytes (adjust if needed)
+        if (*p == '.') continue; // directive, no instruction bytes (adjust if needed)
+        char *colon = strchr(p, ':');
+        if (colon) {
+            // check if there's anything but whitespace after the colon
+            char *rest = colon + 1;
+            while (*rest == ' ' || *rest == '\t') rest++;
+            if (*rest == '\0' || *rest == '\n' || (rest[0]=='/' && rest[1]=='/'))
+                continue; // label-only line, no instruction bytes
+        }
 
         offset_bytes += 4; // one AArch64 instruction
     }
