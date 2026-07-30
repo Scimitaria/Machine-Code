@@ -35,8 +35,44 @@ char get(FILE* input){
     return c == EOF ? EOF : tolower((unsigned char)c);
 }
 
-int32_t get_offset(FILE* input){
-    return 0;
+void readString(FILE *input, char *label){
+    int c;
+    int i = 0;
+
+    while ((c = getc(input)) != EOF && !isspace(c)) label[i++] = (char)c;
+
+    label[i] = '\0';
+}
+int32_t get_offset(FILE *fp) {
+    int32_t start_pos = ftell(fp);
+    if (start_pos < 0) return -1;
+
+    char line[512];
+    int32_t offset_bytes = 4; //starts at end of ADR byte
+    char label[300]; 
+    readString(fp,label);
+    char label_pattern[300];
+    snprintf(label_pattern, sizeof(label_pattern), "%s:", label);
+    //printf("Branch: %s; Label: %s\n", label, label_pattern);
+
+    while (fgets(line, sizeof(line), fp)) {
+        char *p = line;
+        while (*p == ' ' || *p == '\t') p++;
+
+        if (*p == '\0' || *p == '\n' || (p[0] == '/' && p[1] == '/')) continue; // blank or comment-only line
+        if (strncmp(p, label_pattern, strlen(label_pattern)) == 0) {
+            fseek(fp, start_pos, SEEK_SET);
+            return offset_bytes; // found it
+        }
+
+        if (*p == '.')
+            continue; // directive, no instruction bytes (adjust if needed)
+
+        offset_bytes += 4; // one AArch64 instruction
+    }
+
+    fseek(fp, start_pos, SEEK_SET);
+    return -1; // label not found
 }
 
 int read_u32(FILE *fp, uint32_t *out){
