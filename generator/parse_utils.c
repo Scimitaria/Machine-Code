@@ -125,7 +125,6 @@ op parse_op(FILE* input){
     skipToNextToken(input);
     char c = get(input);
     op o;
-
     switch(c){
         case '#':
             c = getc(input);
@@ -133,21 +132,42 @@ op parse_op(FILE* input){
             o.isX = false;
             break;
         case 'x':
-            c = getc(input);
             o.isReg = true;
             o.isX = true;
+
+            if (tolower(peek(input)) == 'z') {
+                get(input);              // z
+                if (get(input) != 'r') error("expected r");
+                o.val = xzr;
+                return o;
+            }
+            c = get(input);
             break;
         case 'w':
             c = getc(input);
             o.isReg = true;
             o.isX = false;
             break;
+        case 's':
+            c = get(input);
+            if(c=='p'){
+                o.val = sp;
+                o.isReg = true;
+                o.isX = true;
+                return o;
+            } else error("failed to parse sp");
+        case '\'':
+            o.val = (c = getc(input));
+            assertCondition((c = getc(input))=='\'',"failed to parse char op");
+            o.isReg = false;
+            o.isX = false;
+            return o;
         default:
             o.isReg = false;
             o.isX = false;
     }
     if(!isdigit(c)){
-        printf("Attempted to read non-numeric value %c", c);
+        printf("Attempted to read non-numeric value %c with next value %c", c, peek(input));
         error("in parse_op");
     }
     o.val = readNumber(input,c);
