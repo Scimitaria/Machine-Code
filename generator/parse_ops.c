@@ -21,8 +21,9 @@ uint32_t parse_add(FILE* input){
 
     bool isImmediate = !op2.isReg;
     bool isX = dest.isX || op1.isX || op2.isX;
-     //printf("#ADD %d,%d,%d; isImmediate: %d, isX: %d\n", dest.val,op1.val,op2.val,isImmediate,isX);
-    return add(dest.val,op1.val,op2.val,isImmediate,isX);
+    bool isSP = op1.isSP || op2.isSP;
+     //printf("#ADD %d,%d,%d; isImmediate: %d, isX: %d, isSP: %d\n", dest.val,op1.val,op2.val,isImmediate,isX,isSP);
+    return add(dest.val,op1.val,op2.val,isImmediate,isX,isSP);
 }
 uint32_t parse_adr(FILE* input){
     op dest = parse_op(input);

@@ -77,7 +77,7 @@ uint32_t adr(uint8_t reg, int32_t string_offset){
 
 /* MATH */
 //generates add call
-uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, bool isX){
+uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, bool isX, bool isSP){
     uint32_t code = 0;
 
     code |= isX;
@@ -103,6 +103,33 @@ uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, 
 
         code <<= 5;
         code |= destination; //register to add value into
+
+        return code;
+    } else if (isSP) {
+        // ADD (extended register) — required whenever op1 (Rn) or destination (Rd) is SP
+        code <<= 5;
+        code |= 0b01011; // opcode
+
+        code <<= 2;
+        code |= 0b00; // opt
+
+        code <<= 1;
+        code |= 0b1; // <-- the bit your old code hardcoded to 0
+
+        code <<= 5;
+        code |= op2; // Rm
+
+        code <<= 3;
+        code |= isX ? 0b011 : 0b010; // option: UXTX (64-bit) / UXTW (32-bit)
+
+        code <<= 3;
+        code |= 0b000; // imm3 shift amount
+
+        code <<= 5;
+        code |= op1; // Rn (can be SP here)
+
+        code <<= 5;
+        code |= destination; // Rd (can be SP here)
 
         return code;
     } else {

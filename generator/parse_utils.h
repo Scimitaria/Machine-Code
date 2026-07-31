@@ -9,6 +9,7 @@ typedef struct{
     int val;
     bool isReg;
     bool isX;
+    bool isSP;
 } op;
 
 void assertCondition(bool condition, char* errmsg);

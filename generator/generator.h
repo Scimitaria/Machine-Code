@@ -26,7 +26,7 @@ typedef enum {
 uint32_t mov(uint8_t reg, uint16_t val, bool isX);
 uint32_t movreg(uint8_t destination, uint8_t source, bool isX);
 uint32_t adr(uint8_t reg, int32_t string_offset);
-uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, bool isX);
+uint32_t add(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, bool isX, bool isSP);
 uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, bool isX);
 uint32_t mul(uint8_t destination, uint8_t op1, uint8_t op2, bool isX);
 uint32_t msub(uint8_t destination, uint8_t op1, uint8_t op2, uint8_t op3, bool isX);

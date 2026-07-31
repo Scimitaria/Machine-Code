@@ -132,6 +132,7 @@ op parse_op(FILE* input){
     skipToNextToken(input);
     char c = get(input);
     op o;
+    o.isSP = false;
     switch(c){
         case '#':
             c = getc(input);
@@ -161,6 +162,7 @@ op parse_op(FILE* input){
                 o.val = sp;
                 o.isReg = true;
                 o.isX = true;
+                o.isSP = true;
                 return o;
             } else error("failed to parse sp");
         case '\'':
