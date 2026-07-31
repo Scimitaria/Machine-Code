@@ -215,36 +215,31 @@ uint32_t sub(uint8_t destination, uint8_t op1, uint16_t op2, bool is_immediate, 
 uint32_t mul(uint8_t destination, uint8_t op1, uint8_t op2, bool isX){
     uint32_t code = 0;
 
-    code |= isX;
+    code |= isX;              // sf (bit 31): 1 = 64-bit (X regs), 0 = 32-bit (W regs)
 
-    code <<= 1;
-    u_int8_t isMSub = 0b1; //MADD adds product into third register - in our case, xzr (0)
-    code |= isMSub;
-
-    code <<= 1;
-    u_int8_t setFlags = 0b0; //do not set additional flags
-    code |= setFlags;
+    code <<= 2;
+    code |= 0b00;              // fixed bits (30-29)
 
     code <<= 5;
-    uint8_t opcode = 0b11011; //mult
-    code |= opcode;
+    code |= 0b11011;           // opcode: mul/madd family (28-24)
 
     code <<= 3;
-    uint8_t shift = 0b000; //no shift
-    code |= shift;
+    code |= 0b000;             // fixed bits (23-21)
 
     code <<= 5;
-    code |= op1; //register value to mult
+    code |= op2;               // Rm (20-16) - second source register
 
-    code <<= 6;
-    u_int8_t imm6 = 0b000000; //no additional flags
-    code |= imm6;
-
-    code <<= 5;
-    code |= op2; //second register value to mult
+    code <<= 1;
+    code |= 0b0;               // o0 (15): 0 = MADD (mul), 1 = MSUB
 
     code <<= 5;
-    code |= destination; //register to mult value into
+    code |= 0b11111;           // Ra (14-10): XZR = register 31, not 0!
+
+    code <<= 5;
+    code |= op1;               // Rn (9-5) - first source register
+
+    code <<= 5;
+    code |= destination;       // Rd (4-0)
 
     return code;
 }
@@ -409,12 +404,9 @@ uint32_t cmp(uint8_t op1, uint16_t op2, bool is_immediate, bool isX){
 uint32_t strb_nb(uint8_t source, uint8_t base, bool isX){
     uint32_t code = 0;
 
-    code <<= 1;
-    code |= isX;
-
-    code <<= 1;
-    uint8_t access_size = 0b0; //1 byte
-    code |= access_size;
+    code <<= 2;
+    uint8_t size = 0b00; // always 00 for byte access; isX is irrelevant here
+    code |= size;
 
     code <<= 1;
     uint8_t isStore = 0b1; //store
@@ -429,7 +421,7 @@ uint32_t strb_nb(uint8_t source, uint8_t base, bool isX){
     code |= high_bits;
 
     code <<= 12;
-    uint8_t immediate = 0b000000000000; //immediate bits
+    uint16_t immediate = 0b000000000000; //immediate bits
     code |= immediate;
 
     code <<= 5;
@@ -444,12 +436,9 @@ uint32_t strb_nb(uint8_t source, uint8_t base, bool isX){
 uint32_t strb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
     uint32_t code = 0;
 
-    code <<= 1;
-    code |= isX;
-
-    code <<= 1;
-    uint8_t access_size = 0b0; //1 byte
-    code |= access_size;
+    code <<= 2;
+    uint8_t size = 0b00; // always 00 for byte access; isX is irrelevant here
+    code |= size;
 
     code <<= 9;
     uint16_t opcode = 0b111000001;
@@ -474,15 +463,12 @@ uint32_t strb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
 uint32_t ldrb_nb(uint8_t destination, uint8_t base, bool isX){
     uint32_t code = 0;
 
-    code <<= 1;
-    code |= isX;
-
-    code <<= 1;
-    uint8_t access_size = 0b0; //1 byte
-    code |= access_size;
+    code <<= 2;
+    uint8_t size = 0b00; // always 00 for byte access; isX is irrelevant here
+    code |= size;
 
     code <<= 6;
-    uint8_t opcode = 0b111001; //load/store
+    uint8_t opcode = 0b111001;
     code |= opcode;
 
     code <<= 2;
@@ -505,12 +491,9 @@ uint32_t ldrb_nb(uint8_t destination, uint8_t base, bool isX){
 uint32_t ldrb(uint8_t destination, uint8_t base, uint8_t offset, bool isX){
     uint32_t code = 0;
 
-    code <<= 1;
-    code |= isX;
-
-    code <<= 1;
-    uint8_t access_size = 0b0; //1 byte
-    code |= access_size;
+    code <<= 2;
+    uint8_t size = 0b00; // always 00 for byte access; isX is irrelevant here
+    code |= size;
 
     code <<= 1;
     uint8_t isLoad = 0b1;

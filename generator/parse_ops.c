@@ -1,12 +1,16 @@
 #include "parse_ops.h"
 
-const char *const condStrings[] = {
-    [eq] = "eq",
-    [ne] = "ne",
-    [ge] = "ge",
-    [lt] = "lt",
-    [gt] = "gt",
-    [le] = "le"
+typedef struct {
+    const char *name;
+    cond value;
+} CondEntry;
+static const CondEntry condTable[] = {
+    {"eq", eq},
+    {"ne", ne},
+    {"ge", ge},
+    {"lt", lt},
+    {"gt", gt},
+    {"le", le},
 };
 
 uint32_t parse_add(FILE* input){
@@ -35,22 +39,31 @@ uint32_t parse_adr(FILE* input){
     return adr(dest.val,offset);
 }
 uint32_t parse_b(FILE* input){
-    int32_t offset = get_offset(input)/4;
     skipToNextToken(input);
+    int32_t raw = get_offset(input);
+    if (raw == -1) error("Label not found for b");
+    int32_t offset = raw/4;
+    skipToNextToken(input);
+    //printf("B %d\n",offset);
     return b(offset);
 }
 uint32_t parse_b_cond(FILE* input){
     cond con = cond_count;
     char condStr[3];
-    //printf(condStr,"%c%c", get(input), get(input));
-    for(int i=0; i<cond_count; i++){
-        if(strcmp(condStr,condStrings[i])==0){
-            con = (cond)i;
+    sprintf(condStr,"%c%c", get(input), get(input));
+    for (size_t i = 0; i < sizeof(condTable)/sizeof(condTable[0]); i++) {
+        if (strcmp(condStr, condTable[i].name) == 0) {
+            con = condTable[i].value;
             break;
         }
     }
     if(con == cond_count) error("Invalid condition in b.cond");
-    int32_t offset = get_offset(input)/4;
+
+    skipToNextToken(input);
+    int32_t raw = get_offset(input);
+    if (raw < 0) error("Label not found for b.cond");
+    int32_t offset = raw/4;
+    //printf("#B.%s %d\n", condStr, offset);
     skipToNextToken(input);
     return b_cond(con,offset);
 }
@@ -58,7 +71,9 @@ uint32_t parse_cbz(FILE* input, bool isCBNZ){
     op dest = parse_op(input);
     assertCondition(dest.isReg,"Destination for CBZ/CBNZ must be a register");
     skipToNextToken(input);
-    int32_t offset = get_offset(input);
+    int32_t raw = get_offset(input);
+    if (raw < 0) error("Label not found for cbz");
+    int32_t offset = raw/4;
     skipToNextToken(input);
     return cbz(dest.val,offset,isCBNZ,dest.isX);
 }
@@ -101,12 +116,14 @@ uint32_t parse_ldrb(FILE* input){
         getc(input);
         skipToNextToken(input);
         bool isX = dest.isX || op1.isX;
+        //printf("#LDRB %d, [%d]; isX: %d\n", dest.val,op1.val,isX);
         return ldrb_nb(dest.val,op1.val,isX);
     } else {
         op op2 = parse_op(input);
         assertCondition(op2.isReg,"Second LDRB operand must be a register");
         skipToNextToken(input);
         bool isX = dest.isX || op1.isX || op2.isX;
+        //printf("#LDRB %d, [%d,%d]; isX: %d\n", dest.val,op1.val,op2.val,isX);
         return ldrb(dest.val,op1.val,op2.val,isX);
     }
 }
@@ -152,7 +169,7 @@ uint32_t parse_mul(FILE* input){
     skipToNextToken(input);
 
     bool isX = dest.isX || op1.isX || op2.isX;
-     //printf("#MUL %d,%d,%d, isX: %d\n", dest.val,op1.val,op2.val,isX);
+    //printf("#MUL %d,%d,%d, isX: %d\n", dest.val,op1.val,op2.val,isX);
     return mul(dest.val,op1.val,op2.val,isX);
 }
 uint32_t parse_strb(FILE* input){
@@ -168,12 +185,14 @@ uint32_t parse_strb(FILE* input){
         getc(input);
         skipToNextToken(input);
         bool isX = dest.isX || op1.isX;
+        //printf("#STRB %d, [%d]; isX: %d\n", dest.val,op1.val,isX);
         return strb_nb(dest.val,op1.val,isX);
     } else {
         op op2 = parse_op(input);
         assertCondition(op2.isReg,"Second STRB operand must be a register");
         skipToNextToken(input);
         bool isX = dest.isX || op1.isX || op2.isX;
+        //printf("#STRB %d, [%d,%d]; isX: %d\n", dest.val,op1.val,op2.val,isX);
         return strb(dest.val,op1.val,op2.val,isX);
     }
 }

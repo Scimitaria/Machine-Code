@@ -48,38 +48,50 @@ int32_t get_offset(FILE *fp) {
     if (start_pos < 0) return -1;
 
     char line[512];
-    int32_t offset_bytes = 4; //starts at end of ADR byte
-    char label[300]; 
-    readString(fp,label);
+    int32_t offset_bytes = 4; // starts at end of ADR byte
+    char label[300];
+    readString(fp, label);
     char label_pattern[300];
     snprintf(label_pattern, sizeof(label_pattern), "%s:", label);
-    //printf("Branch: %s; Label: %s\n", label, label_pattern);
 
-    while (fgets(line, sizeof(line), fp)) {
+    int32_t branch_offset = -1;
+    int32_t label_offset = -1;
+
+    rewind(fp);
+
+    long line_start;
+    while ((line_start = ftell(fp)) >= 0 && fgets(line, sizeof(line), fp)) {
+        long line_end = line_start + (long)strlen(line);
+
         char *p = line;
         while (*p == ' ' || *p == '\t') p++;
 
-        if (*p == '\0' || *p == '\n' || (p[0] == '/' && p[1] == '/')) continue; // blank or comment-only line
-        if (strncmp(p, label_pattern, strlen(label_pattern)) == 0) {
-            fseek(fp, start_pos, SEEK_SET);
-            return offset_bytes; // found it
-        }
+        if (*p == '\0' || *p == '\n' || (p[0] == '/' && p[1] == '/')) continue;
 
-        if (*p == '.') continue; // directive, no instruction bytes (adjust if needed)
+        if (strncmp(p, label_pattern, strlen(label_pattern)) == 0)
+            label_offset = offset_bytes;
+
+        // does this source line contain the instruction we were called from?
+        if (start_pos >= line_start && start_pos < line_end)
+            branch_offset = offset_bytes;
+
+        if (*p == '.') continue;
+
         char *colon = strchr(p, ':');
         if (colon) {
-            // check if there's anything but whitespace after the colon
             char *rest = colon + 1;
             while (*rest == ' ' || *rest == '\t') rest++;
             if (*rest == '\0' || *rest == '\n' || (rest[0]=='/' && rest[1]=='/'))
-                continue; // label-only line, no instruction bytes
+                continue;
         }
 
-        offset_bytes += 4; // one AArch64 instruction
+        offset_bytes += 4;
     }
 
     fseek(fp, start_pos, SEEK_SET);
-    return -1; // label not found
+    if (branch_offset == -1) error("branch not found");
+    if (label_offset == -1) error("label not found");
+    return label_offset - branch_offset;
 }
 
 int read_u32(FILE *fp, uint32_t *out){

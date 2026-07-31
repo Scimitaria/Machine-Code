@@ -50,9 +50,9 @@ Hex files have the `.s` extension, while binary files have `.bin.s`. The hex fil
 
 ---
 
-## Parsing
+## ASM Parsing
 
-`gen` can take a filepath from `/asm/` as an argument, which will cue `asm_parser.c` to attempt to disassemble it. This functionality is partially deprecated due to issues with reserved registers and branch offsets, but still works on `hello.asm`. `decomp` is a far better script for disassembling assembly.
+`gen` can take a filepath from `/asm/` as an argument, which will cue `asm_parser.c` to disassemble it.
 
 ---
 
