@@ -1,0 +1,2 @@
+#!/bin/zsh
+gcc *.c -o /usr/local/bin/mc

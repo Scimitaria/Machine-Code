@@ -50,7 +50,7 @@ Hex files have the `.s` extension, while binary files have `.bin.s`. The hex fil
 
 This interpreter is now shebang compatible! You can execute machine code files as scripts, eg:
 ```
-gcc *.c -o /usr/local/bin/ mc
+gcc *.c -o /usr/local/bin/mc
 chmod 755 bin/io/print.s
 ./bin.io/print.s
 ```
@@ -58,6 +58,7 @@ And, at the top of print.s:
 ```
 #!/usr/local/bin/mc
 ```
+```update_system_copy``` automates this process.
 
 ---
 
