@@ -48,6 +48,17 @@ Machine code files are stored in `/bin/`, with the following subfolders:
 
 Hex files have the `.s` extension, while binary files have `.bin.s`. The hex files have more documentation.
 
+This interpreter is now shebang compatible! You can execute machine code files as scripts, eg:
+```
+gcc *.c -o /usr/local/bin/ mc
+chmod 755 bin/io/print.s
+./bin.io/print.s
+```
+And, at the top of print.s:
+```
+#!/usr/local/bin/mc
+```
+
 ---
 
 ## ASM Parsing

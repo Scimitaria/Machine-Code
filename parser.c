@@ -1,13 +1,15 @@
 #include "parser.h"
 
 const char* get_file_extension(const char *fpath) {
-    // Find the last occurrence of '.'
-    const char *dot = strchr(fpath, '.');
-
-    // If dot is not found, or it is the first character (hidden file like .htaccess), return empty string
-    if (!dot || dot == fpath) return "";
-
-    // Return the extension (characters after the dot)
+    // Find the beginning of the filename 
+    const char *filename = strrchr(fpath, '/'); 
+    if (filename) filename++; 
+    // Skip the '/' 
+    else filename = fpath; 
+    // Find the first '.' in the filename 
+    const char *dot = strchr(filename, '.'); 
+    // No extension, or filename starts with '.' 
+    if (!dot || dot == filename) return ""; 
     return dot;
 }
 
@@ -96,7 +98,7 @@ u_int32_t* parse_binary(char *fpath){
         machine_code[current_size-1] = code;
 
         //printf("%c, %d\n", c, current_size);
-        print_binary(code,0);
+        //print_binary(code,0);
         c = peek(file);
     }
     fclose(file);
