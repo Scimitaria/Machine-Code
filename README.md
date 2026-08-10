@@ -74,3 +74,4 @@ The repository contains the following Zsh scripts:
 - `gen`: runs the generator.
 - `run_asm`: takes a path from `/asm/` and runs an assembly file.
 - `decomp`: takes a path from `/asm/` and disassembles an assembly file into machine code.
+- `update_system_copy`: compiles runner into `/usr/local/bin/mc` for shebang execution
