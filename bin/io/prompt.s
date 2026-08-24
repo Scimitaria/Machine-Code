@@ -4,7 +4,7 @@
 0xD2800020  # MOV x0, #1 ; 1 = stdout
 0xD2800042  # MOV x2, #2 ; length of string 
 0xD2800090  # MOV x16, #4 ; set up syscall for 'write'
-0xD4001001  # svc #0x80 ; syscall
+0xD4001001  # SVC #0x80 ; syscall
 
 0xD2800000   # MOV  X0, #0        ; stdin
 0x910003E1   # ADD  X1, SP        ; buffer = stack pointer

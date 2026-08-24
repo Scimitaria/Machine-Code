@@ -12,7 +12,7 @@
     0x10000E61  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
-    0xD4001001  # svc #0x80  ; syscall
+    0xD4001001  # SVC #0x80  ; syscall
 
 ## GET INPUT ##
     0xD2800000   # MOV  x0, #0        ; stdin
@@ -52,7 +52,7 @@
     0x10000AE1  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16, #4 ; set up syscall for 'write'
-    0xD4001001  # svc #0x80 ; syscall
+    0xD4001001  # SVC #0x80 ; syscall
 
 ## GET INPUT ##
     0xD2800000   # MOV  x0, #0        ; stdin
@@ -91,7 +91,7 @@
     0x10000761  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
-    0xD4001001  # svc #0x80  ; syscall
+    0xD4001001  # SVC #0x80  ; syscall
 
 ## READ INTO W3 ##
     0xD2800000   # MOV  X0, #0        ; stdin

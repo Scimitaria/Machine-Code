@@ -85,7 +85,7 @@ u_int32_t readLine(FILE* input){
                     if(get(input)=='b') return parse_sub(input);
                     //else error("Input su not followed by b");
                 case 'v':
-                    if(get(input)=='c') return parse_svc(input);
+                    if(get(input)=='c') return parse_SVC(input);
                     //else error("Input sv not followed by c");
                 default: skipLine(input);
                     //printf("Input s followed by %c", c);

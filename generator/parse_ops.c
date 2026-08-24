@@ -211,11 +211,11 @@ uint32_t parse_sub(FILE* input){
      //printf("#SUB %d,%d,%d; isImmediate: %d, isX: %d\n", dest.val,op1.val,op2.val,isImmediate,isX);
     return sub(dest.val,op1.val,op2.val,isImmediate,isX);
 }
-uint32_t parse_svc(FILE* input){
+uint32_t parse_SVC(FILE* input){
     parse_op(input);
     skipToNextToken(input);
      //printf("#SVC #0x80\n");
-    return svc;
+    return SVC;
 }
 uint32_t parse_string(FILE* input){
     enum {

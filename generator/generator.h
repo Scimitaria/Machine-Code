@@ -6,7 +6,7 @@
 //fixed hexcodes
 #define nop 0xD503201F //idle
 #define ret 0xD65F03C0 //return
-#define svc 0xD4001001 //syscall
+#define SVC 0xD4001001 //syscall
 
 //registers
 #define sp (uint8_t)31 //stack pointer reg

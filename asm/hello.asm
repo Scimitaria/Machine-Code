@@ -7,12 +7,12 @@ _main:
     adr x1, hello_world    // Load address of our string
     mov x2, 14             // Length of the string
     mov x16, 4             // macOS 'write' system call
-    svc #0x80              // Supervisor call to interrupt kernel
+    SVC #0x80              // Supervisor call to interrupt kernel
 
     // 2. Setup system call for exit (syscall #1)
     mov x0, 0              // Exit code 0 (Success)
     mov x16, 1             // macOS 'exit' system call
-    svc 0x80               // Supervisor call
+    SVC 0x80               // Supervisor call
 
 hello_world:
     .asciz "Hello, World!\n"
