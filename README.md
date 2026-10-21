@@ -3,6 +3,25 @@ Experimenting with parsing and executing raw machine code on macOS ARM64
 
 ---
 
+## Usage
+### Installation:
+Run `update_system_copy` to install `mc` on your computer.
+
+### One-time usage:
+See documentation for `run` and `gen` for one-time, non-installation usage.
+
+---
+
+## Scripts
+The repository contains the following Zsh scripts:
+- `run`: takes a path from `/bin/` and runs a machine code file. Runs `/bin/math/calc/prnc.s` by default.
+- `gen`: runs the generator.
+- `run_asm`: takes a path from `/asm/` and runs an assembly file.
+- `decomp`: takes a path from `/asm/` and disassembles an assembly file into machine code.
+- `update_system_copy`: compiles runner into `/usr/local/bin/mc` for shebang execution
+
+---
+
 ## Generation
 
 `generator/generator.c` contains a number of functions which can be used to generate machine code instructions. The operations currently supported are:
@@ -65,13 +84,3 @@ And, at the top of print.s:
 ## ASM Parsing
 
 `gen` can take a filepath from `/asm/` as an argument, which will cue `asm_parser.c` to disassemble it.
-
----
-
-## Scripts
-The repository contains the following Zsh scripts:
-- `run`: takes a path from `/bin/` and runs a machine code file. Runs `/bin/math/calc/prnc.s` by default.
-- `gen`: runs the generator.
-- `run_asm`: takes a path from `/asm/` and runs an assembly file.
-- `decomp`: takes a path from `/asm/` and disassembles an assembly file into machine code.
-- `update_system_copy`: compiles runner into `/usr/local/bin/mc` for shebang execution
