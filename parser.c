@@ -1,18 +1,5 @@
 #include "parser.h"
 
-const char* get_file_extension(const char *fpath) {
-    // Find the beginning of the filename 
-    const char *filename = strrchr(fpath, '/'); 
-    if (filename) filename++; 
-    // Skip the '/' 
-    else filename = fpath; 
-    // Find the first '.' in the filename 
-    const char *dot = strchr(filename, '.'); 
-    // No extension, or filename starts with '.' 
-    if (!dot || dot == filename) return ""; 
-    return dot;
-}
-
 int current_size=0;
 
 u_int32_t* parse_hex(char* fpath){
@@ -106,6 +93,28 @@ u_int32_t* parse_binary(char *fpath){
 }
 
 u_int32_t* parse(char* fpath){
-    if(strcmp(get_file_extension(fpath),".bin.s")==0) return parse_binary(fpath);
-    return parse_hex(fpath);
+    FILE *file = fopen(fpath, "r");
+    
+    char c = peek(file);
+    while(c!=EOF){
+        if(c=='#'){
+            //comment
+            skipLine(file);
+            c = peek(file);
+            continue;
+        }
+        if(isspace(c)||c=='\n'){
+            //not binary
+            getc(file);
+            c = peek(file);
+            continue;
+        }
+        if(getc(file)=='0'&&tolower(peek(file))=='x') {
+            fclose(file);
+            return parse_hex(fpath);
+        }
+        break;
+    }
+    fclose(file);
+    return parse_binary(fpath);
 }
