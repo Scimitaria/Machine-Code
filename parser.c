@@ -15,7 +15,13 @@ u_int32_t* parse_hex(char* fpath){
     while(c!=EOF){
         c = getc(file);
         if(c=='#') skipLine(file);//comment
-        else if(!isspace(c)&&!(c==EOF)&&!(c=='\n')) strncat(str,&c,1);
+        else if (!isspace((unsigned char)c) && c != EOF) {
+            size_t len = strlen(str);
+            if (len < sizeof(str) - 1) {
+                str[len] = c;
+                str[len + 1] = '\0';
+            }
+        }
         else{
             //don't append empty
             if(strcmp(str,"")==0) continue;
@@ -26,7 +32,7 @@ u_int32_t* parse_hex(char* fpath){
             machine_code[current_size-1]=(u_int32_t)strtoul(str,NULL,16);
 
             //reset string
-            strncpy(str, "", sizeof(str) - 1);
+            str[0] = '\0';
 
             //print_binary(machine_code[current_size-1],0);
         }
