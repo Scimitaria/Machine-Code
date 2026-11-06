@@ -1,2 +1,2 @@
 #!/bin/zsh
-gcc *.c -O2  -DNDEBUG -flto -o /usr/local/bin/mc
+gcc *.c -DNDEBUG -flto -o /usr/local/bin/mc
