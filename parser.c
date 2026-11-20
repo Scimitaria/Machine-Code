@@ -34,7 +34,7 @@ u_int32_t* parse_hex(char* fpath){
             //reset string
             str[0] = '\0';
 
-            //print_binary(machine_code[current_size-1],0);
+            print_binary(machine_code[current_size-1],0);
         }
     }
 

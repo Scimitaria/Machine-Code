@@ -10,6 +10,8 @@
 .align 4
 
 _main:
+    SUB SP,SP,48
+
     load_nums:  
         BL load_num
         MOV X20,X2
@@ -25,7 +27,6 @@ _main:
             SVC 0X80
 
         read_op:
-            SUB SP,SP,16
             MOV X0,0
             MOV X1,SP
             MOV X2,8
@@ -58,7 +59,7 @@ _main:
 
     print:
         itoa_setup:
-            ADD X6,SP,31
+            ADD X6,SP,46
             MOV X7,0
             MOV X8,10
             CBNZ X2,itoa_loop
@@ -95,7 +96,7 @@ _main:
         B load_nums
 
     eXit:
-        ADD SP,SP,16
+        ADD SP,SP,48
         MOV X0,0
         MOV X16,1
         SVC 0X80

@@ -6,22 +6,24 @@
 # X2  - result          #
 # # # # # # # # # # # # #
 
+### ALLOCATE STACK ###
+    0xD100C3FF  # SUB SP, SP, #48
+
 ### READ NUMBERS INTO x20, X21 ###
-    0x94000041  # BL  load_num
+    0x94000040  # BL  load_num
     0xAA0203F4  # MOV X20, X2
-    0x9400003F  # BL  load_num
+    0x9400003E  # BL  load_num
     0xAA0203F5  # MOV X20, X2
 
 ### READ OPERATION INTO W3 ###
 ## PRINT PROMPT ##
     0xD2800020  # MOV x0, #1 ; 1 = stdout
-    0x10000B41  # ADR x1,prompt
+    0x10000B21  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
     0xD4001001  # SVC #0x80  ; syscall
 
 ## READ INTO W3 ##
-    0xD10043FF   # SUB  SP, SP, #16   ; allocate space
     0xD2800000   # MOV  X0, #0        ; stdin
     0x910003E1   # MOV  x1, SP        ; buffer = stack pointer
     0xD2800102   # MOV  X2, #8        ; read up to 8 bytes
@@ -56,11 +58,11 @@
 
 ### PRINT ###
 ## ITOA SETUP ##
-    0x91007FE6 # ADD x6,SP,#31 ; x6 = pointer to stack buffer
-    0xD2800007 # MOV x7,#0 ; x7 = digit count
-    0xD2800148 # MOV x8,#10 ; divisor
-    0xB50000C2 # CBNZ X2, 6 ; start of ITOA loop
-    0x52800604 # MOV w4,#'0' ; result is 0
+    0x9100BBE6 # ADD x6,SP,#46 ; x6 = pointer to stack buffer
+    0xD2800007 # MOV x7,#0     ; x7 = digit count
+    0xD2800148 # MOV x8,#10    ; divisor
+    0xB50000C2 # CBNZ X2, 6    ; start of ITOA loop
+    0x52800604 # MOV w4,#'0'   ; result is 0
     0x390000C4 # STRB w4,[x6]
     0xD10004C6 # SUB x6,x6,#1
     0xD2800027 # MOV x7,#1
@@ -92,10 +94,10 @@
 ### END PRINT ###
 
 ## JUMP BACK TO START UNLESS EXIT ##
-0x17FFFFC4 # B ; jump back to start
+0x17FFFFC5 # B ; jump back to start
 
 ### EXIT ###
-    0x910043FF  # ADD SP,SP,#16  ; restore stack before exit
+    0x91003CFF  # ADD SP,SP,#48  ; restore stack before exit
     0xD2800000  # MOV x0,#0 
     0xD2800030  # MOV x16,#1     ; syscall: exit
     0xD4001001  # SVC #0x80      ; syscall
