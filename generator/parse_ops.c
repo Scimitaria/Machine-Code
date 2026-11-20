@@ -45,7 +45,16 @@ uint32_t parse_b(FILE* input){
     int32_t offset = raw/4;
     skipToNextToken(input);
     //printf("B %d\n",offset);
-    return b(offset);
+    return b(false,offset);
+}
+uint32_t parse_bl(FILE* input){
+    skipToNextToken(input);
+    int32_t raw = get_offset(input);
+    if (raw == -1) error("Label not found for bl");
+    int32_t offset = raw/4;
+    skipToNextToken(input);
+    //printf("BL %d\n",offset);
+    return b(true,offset);
 }
 uint32_t parse_b_cond(FILE* input){
     cond con = cond_count;
@@ -135,9 +144,10 @@ uint32_t parse_mov(FILE* input){
     skipToNextToken(input);
 
     bool isX = dest.isX || src.isX;
-     //printf("#MOV %d,%d; isImmediate: %d, isX: %d\n", dest.val,src.val,!src.isReg,isX);
+    //if(src.isSP) printf("#MOV %d, SP; isImmediate: %d, isX: %d\n", dest.val,!src.isReg,isX);
+    //else printf("#MOV %d,%d; isImmediate: %d, isX: %d\n", dest.val,src.val,!src.isReg,isX);
     if(!src.isReg) return mov(dest.val,src.val,isX);
-    else return movreg(dest.val,src.val,isX);
+    else return movreg(dest.val,src.val,isX, src.isSP);
 }
 uint32_t parse_msub(FILE* input){
     op dest = parse_op(input);

@@ -20,3 +20,7 @@ int read_u32(FILE *fp, uint32_t *out);
 int32_t get_offset(FILE* input);
 op parse_op(FILE* input);
 noreturn void error(char* msg);
+
+bool eat(FILE* in, char want);
+bool eatStr(FILE* in, const char* s);
+bool endsMnemonic(FILE* in);

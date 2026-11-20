@@ -169,8 +169,7 @@ op parse_op(FILE* input){
             o.isX = false;
             break;
         case 's':
-            c = get(input);
-            if(c=='p'){
+            if((c = get(input))=='p'){
                 o.val = sp;
                 o.isReg = true;
                 o.isX = true;
@@ -193,4 +192,19 @@ op parse_op(FILE* input){
     }
     o.val = readNumber(input,c);
     return o;
+}
+
+// Consume `want` (case-insensitive) only if it's next; otherwise leave input untouched.
+bool eat(FILE* in, char want){
+    int c = peek(in);
+    if(c != EOF && tolower(c) == want){ getc(in); return true; }
+    return false;
+}
+bool eatStr(FILE* in, const char* s){
+    for(; *s; s++) if(!eat(in, *s)) return false;
+    return true;
+}
+bool endsMnemonic(FILE* in){
+    int c = peek(in);
+    return c == EOF || isspace(c);
 }

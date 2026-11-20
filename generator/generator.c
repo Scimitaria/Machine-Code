@@ -27,36 +27,60 @@ uint32_t mov(uint8_t reg, uint16_t val, bool isX){
     return code;
 }
 //generates mov call with registers
-uint32_t movreg(uint8_t destination, uint8_t source, bool isX){
+uint32_t movreg(uint8_t destination, uint8_t source, bool isX, bool isSP){
     uint32_t code = 0;
 
     code <<= 1;
     code |= isX;
 
-    code <<= 2;
-    code |= 0b01; //ORR
+    if(isSP){
+        code <<= 7;
+        uint8_t opcode = 0b0010001; //ADD
+        code |= opcode;
 
-    code <<= 5;
-    uint8_t opcode = 0b01010; //logical-shifted-register
-    code |= opcode;
+        code <<= 2;
+        uint8_t shift = 0b00;
+        code |= shift;
 
-    code <<= 2;
-    uint8_t shift = 0b00;
-    code |= shift;
+        code <<= 1;
+        uint8_t invertRM = 0b0; //1 makes ORN
+        code |= invertRM;
 
-    code <<= 1;
-    uint8_t invertRM = 0b0; //1 makes ORN
-    code |= invertRM;
+        code <<= 5;
+        //code |= source; //source is 0 here
 
-    code <<= 5;
-    code |= source;
+        code <<= 6;
+        uint8_t imm6 = 0b000000;
+        code |= imm6;
 
-    code <<= 6;
-    uint8_t imm6 = 0b000000;
-    code |= imm6;
+        code <<= 5;
+        code |= xzr;
+    } else{
+        code <<= 2;
+        code |= 0b01; //ORR
 
-    code <<= 5;
-    code |= xzr;
+        code <<= 5;
+        uint8_t opcode = 0b01010; //logical-shifted-register
+        code |= opcode;
+
+        code <<= 2;
+        uint8_t shift = 0b00;
+        code |= shift;
+
+        code <<= 1;
+        uint8_t invertRM = 0b0; //1 makes ORN
+        code |= invertRM;
+
+        code <<= 5;
+        code |= source;
+
+        code <<= 6;
+        uint8_t imm6 = 0b000000;
+        code |= imm6;
+
+        code <<= 5;
+        code |= xzr;
+    }
 
     code <<= 5;
     code |= destination;
@@ -304,8 +328,10 @@ uint32_t udiv(uint8_t destination, uint8_t numerator, uint8_t denominator, bool 
 
 /* BRANCH */
 //generates b (branch jump)
-uint32_t b(int32_t offset){
-    uint32_t code = 0b000101; //B opcode
+uint32_t b(bool is_bl,int32_t offset){
+    uint32_t code = is_bl;
+    code <<= 5;
+    code |= 0b000101; //B opcode
     code <<= 26;
     code |= (offset & 0x3FFFFFF); // mask to 26 bits in case of negative numbers
 

@@ -10,87 +10,11 @@
 .align 4
 
 _main:
-    load_num1:
-        prompt_num1:
-            MOV X0,1
-            ADR X1,prompt
-            MOV X2,2
-            MOV X16,4
-            SVC 0X80
-
-        read_num1:
-            SUB SP,SP,32
-            MOV X0,0
-            MOV X1,SP
-            MOV X2,31
-            MOV X16,3
-            SVC 0X80
-            MOV X19,X0
-
-        num1_atoi_setup:
-            MOV X1,SP
-            MOV X2,0
-            MOV X3,0
-        
-        num1_atoi_loop:
-            CMP X3,X19
-            B.GE num1_parse_done
-            LDRB W4,[X1,X3]
-            CMP W4,'0'
-            B.LT num1_parse_done
-            CMP W4,'9'
-            B.GT num1_parse_done
-            SUB W4,W4,'0'
-            MOV X5,10
-            MUL X2,X2,X5
-            ADD X2,X2,X4
-            ADD X3,X3,1
-            B num1_atoi_loop
-
-        num1_parse_done:
-            ADD SP,SP,32
-            MOV X20,X2
-
-    load_num2:
-        prompt_num2:
-            MOV X0,1
-            ADR X1,prompt
-            MOV X2,2
-            MOV X16,4
-            SVC 0X80
-
-        read_num2:
-            SUB SP,SP,32
-            MOV X0,0
-            MOV X1,SP
-            MOV X2,31
-            MOV X16,3
-            SVC 0X80
-            MOV X19,X0
-
-        num2_atoi_setup:
-            MOV X1,SP
-            MOV X2,0
-            MOV X3,0
-        
-        num2_atoi_loop:
-            CMP X3,X19
-            B.GE num2_parse_done
-            LDRB W4,[X1,X3]
-            CMP W4,'0'
-            B.LT num2_parse_done
-            CMP W4,'9'
-            B.GT num2_parse_done
-            SUB W4,W4,'0'
-            MOV X5,10
-            MUL X2,X2,X5
-            ADD X2,X2,X4
-            ADD X3,X3,1
-            B num2_atoi_loop
-
-        num2_parse_done:
-            ADD SP,SP,32
-            MOV X21,X2
+    load_nums:  
+        BL load_num
+        MOV X20,X2
+        BL load_num
+        MOV X21,X2
 
     load_op:
         prompt_op:
@@ -168,13 +92,54 @@ _main:
             MOV X16,4
             SVC 0X80
 
-        B load_num1
+        B load_nums
 
     eXit:
         ADD SP,SP,16
         MOV X0,0
         MOV X16,1
         SVC 0X80
+
+    load_num:
+        prompt_num:
+            MOV X0,1
+            ADR X1,prompt
+            MOV X2,2
+            MOV X16,4
+            SVC 0X80
+
+        read_num:
+            SUB SP,SP,32
+            MOV X0,0
+            MOV X1,SP
+            MOV X2,31
+            MOV X16,3
+            SVC 0X80
+            MOV X19,X0
+
+        atoi_setup:
+            MOV X1,SP
+            MOV X2,0
+            MOV X3,0
+        
+        atoi_loop:
+            CMP X3,X19
+            B.GE parse_done
+            LDRB W4,[X1,X3]
+            CMP W4,'0'
+            B.LT parse_done
+            CMP W4,'9'
+            B.GT parse_done
+            SUB W4,W4,'0'
+            MOV X5,10
+            MUL X2,X2,X5
+            ADD X2,X2,X4
+            ADD X3,X3,1
+            B atoi_loop
+
+        parse_done:
+            ADD SP,SP,32
+            RET
 
 prompt:
     .asciz "> "

@@ -4,6 +4,7 @@
 uint32_t parse_add(FILE* input);
 uint32_t parse_adr(FILE* input);
 uint32_t parse_b(FILE* input);
+uint32_t parse_bl(FILE* input);
 uint32_t parse_b_cond(FILE* input);
 uint32_t parse_cbz(FILE* input, bool isCBNZ);
 uint32_t parse_cmp(FILE* input);
