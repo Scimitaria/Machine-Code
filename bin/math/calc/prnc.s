@@ -128,7 +128,7 @@
     0x7100BC7F # CMP W3,#'/'
     0x540003E1 # B.NE ; skip to exit
     0x9AD50A82 # DIV x2,x20,x21
-   #0x14000001 # B 1 ; jump to print
+    0x14000001 # B 1 ; jump to print
 ### END OPERATIONS ###
 
 ### PRINT ###
