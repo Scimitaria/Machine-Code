@@ -19,15 +19,16 @@ _main:
             SVC 0X80
 
         read_num1:
+            SUB SP,SP,32
             MOV X0,0
-            ADD X1,SP,XZR
-            MOV X2,8
+            MOV X1,SP
+            MOV X2,31
             MOV X16,3
             SVC 0X80
             MOV X19,X0
 
         num1_atoi_setup:
-            ADD X1,SP,XZR
+            MOV X1,SP
             MOV X2,0
             MOV X3,0
         
@@ -47,6 +48,7 @@ _main:
             B num1_atoi_loop
 
         num1_parse_done:
+            ADD SP,SP,32
             MOV X20,X2
 
     load_num2:
@@ -58,15 +60,16 @@ _main:
             SVC 0X80
 
         read_num2:
+            SUB SP,SP,32
             MOV X0,0
-            ADD X1,SP,XZR
-            MOV X2,8
+            MOV X1,SP
+            MOV X2,31
             MOV X16,3
             SVC 0X80
             MOV X19,X0
 
         num2_atoi_setup:
-            ADD X1,SP,XZR
+            MOV X1,SP
             MOV X2,0
             MOV X3,0
         
@@ -86,6 +89,7 @@ _main:
             B num2_atoi_loop
 
         num2_parse_done:
+            ADD SP,SP,32
             MOV X21,X2
 
     load_op:
@@ -97,8 +101,9 @@ _main:
             SVC 0X80
 
         read_op:
+            SUB SP,SP,16
             MOV X0,0
-            ADD X1,SP,XZR
+            MOV X1,SP
             MOV X2,8
             MOV X16,3
             SVC 0X80

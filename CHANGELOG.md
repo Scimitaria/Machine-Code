@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026/11/20
+
+### Fixed
+- Increased buffer size to prevent overflows on large integers
+- Fixed stack memory restoration
+
 ## [1.2.0] - 2026/11/5
 
 ### Changed

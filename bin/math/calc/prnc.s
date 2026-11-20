@@ -6,24 +6,25 @@
 # X2  - result          #
 # # # # # # # # # # # # #
 
-### READ NUM1 INTO x17 ###
+### READ NUM1 INTO x20 ###
 ## PRINT PROMPT ##
     0xD2800020  # MOV x0, #1 ; 1 = stdout
-    0x10000E61  # ADR x1,prompt
+    0x10000F01  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
     0xD4001001  # SVC #0x80  ; syscall
 
 ## GET INPUT ##
+    0xD10083FF   # SUB  SP, SP, #32   ; allocate stack space
     0xD2800000   # MOV  x0, #0        ; stdin
-    0x8B3F63E1   # ADD  x1, SP, XZR   ; buffer = stack pointer
-    0xD2800102   # MOV  x2, #8        ; read up to 8 bytes
+    0x910003E1   # MOV  x1, SP        ; buffer = stack pointer
+    0xD28003E2   # MOV  x2, #31       ; read up to 31 bytes (leaving 1 for newline)
     0xD2800070   # MOV  x16,#3        ; syscall: read
     0xD4001001   # SVC  #0x80
     0xAA0003F3   # MOV  x19,x0        ; x19 = # of bytes read
 
 ## ATOI SETUP ##
-    0x8B3F63E1   # ADD x1,SP,XZR ; buffer = stack pointer
+    0x910003E1   # MOV x1,SP     ; buffer = stack pointer
     0xD2800002   # MOV x2,#0     ; x2 = accumulator ; val goes here
     0xD2800003   # MOV x3,#0     ; x3 = index ; counts through bytes
 
@@ -42,28 +43,30 @@
     0x91000463   # ADD x3,x3,#1 ; i++
     0x17FFFFF4   # B -12 ; start of parse loop
 
+    0x910083FF # ADD SP,SP,#32
     0xAA0203F4 # MOV x20,x2
 ### NUM1 STORED ###
 
 
-### READ NUM2 INTO x18 ###
+### READ NUM2 INTO x21 ###
 ## PRINT PROMPT ##
     0xD2800020  # MOV x0, #1 ; 1 = stdout
-    0x10000AE1  # ADR x1,prompt
+    0x10000B41  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16, #4 ; set up syscall for 'write'
     0xD4001001  # SVC #0x80 ; syscall
 
 ## GET INPUT ##
+    0xD10083FF   # SUB  SP, SP, #32   ; allocate stack space
     0xD2800000   # MOV  x0, #0        ; stdin
-    0x8B3F63E1   # ADD  x1, SP, XZR   ; buffer = stack pointer
-    0xD2800102   # MOV  x2, #8        ; read up to 8 bytes
+    0x910003E1   # MOV  x1, SP        ; buffer = stack pointer
+    0xD28003E2   # MOV  x2, #31       ; read up to 31 bytes
     0xD2800070   # MOV  x16,#3        ; syscall: read
     0xD4001001   # SVC  #0x80
     0xAA0003F3   # MOV  x19,x0        ; x19 = # of bytes read
 
 ## ATOI SETUP ##
-    0x8B3F63E1   # ADD  x1, SP, XZR ; buffer = stack pointer
+    0x910003E1   # MOV x1,SP     ; buffer = stack pointer
     0xD2800002   # MOV x2,#0        ; x2 = accumulator ; val goes here
     0xD2800003   # MOV x3,#0        ; x3 = index ; counts through bytes
 
@@ -82,20 +85,22 @@
     0x91000463   # ADD x3,x3,#1 ; i++
     0x17FFFFF4   # B -12 ; start of parse loop
 
+    0x910083FF # ADD SP,SP,#32
     0xAA0203F5 # MOV x21,x2
 ### NUM2 STORED ###
 
 ### READ OPERATION INTO W3 ###
 ## PRINT PROMPT ##
     0xD2800020  # MOV x0, #1 ; 1 = stdout
-    0x10000761  # ADR x1,prompt
+    0x10000781  # ADR x1,prompt
     0xD2800042  # MOV x2, #2 ; length of string 
     0xD2800090  # MOV x16,#4 ; set up syscall for 'write'
     0xD4001001  # SVC #0x80  ; syscall
 
 ## READ INTO W3 ##
+    0xD10043FF   # SUB  SP, SP, #16   ; allocate space
     0xD2800000   # MOV  X0, #0        ; stdin
-    0x8B3F63E1   # ADD  X1, SP, XZR   ; buffer = stack pointer
+    0x910003E1   # MOV  x1, #16       ; buffer = stack pointer
     0xD2800102   # MOV  X2, #8        ; read up to 8 bytes
     0xD2800070   # MOV  X16, #3       ; syscall: read
     0xD4001001   # SVC  #0x80
@@ -123,7 +128,7 @@
     0x7100BC7F # CMP W3,#'/'
     0x540003E1 # B.NE ; skip to exit
     0x9AD50A82 # DIV x2,x20,x21
-    0x14000001 # B 1 ; jump to print
+   #0x14000001 # B 1 ; jump to print
 ### END OPERATIONS ###
 
 ### PRINT ###
@@ -164,7 +169,7 @@
 ### END PRINT ###
 
 ## JUMP BACK TO START UNLESS EXIT ##
-0x17FFFF91 # B ; jump back to start
+0x17FFFF8C # B ; jump back to start
 
 ### EXIT ###
     0x910043FF  # ADD SP,SP,#16  ; restore stack before exit
